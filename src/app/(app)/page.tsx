@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 async function HomePage({ params: paramsPromise }: { params: Promise<{ slug: string[] }> }) {
   return (
     <div style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto' }}>
@@ -8,9 +10,9 @@ async function HomePage({ params: paramsPromise }: { params: Promise<{ slug: str
 
       <h2>Getting Started</h2>
       <p>
-        <a href="/admin" style={{ color: '#0070f3', textDecoration: 'underline' }}>
+        <Link href="/admin" style={{ color: '#0070f3', textDecoration: 'underline' }}>
           Access the Admin Panel
-        </a>{' '}
+        </Link>{' '}
         to start managing tenants, pages, and media.
       </p>
 
