@@ -196,7 +196,10 @@ export const Pages: CollectionConfig = {
             },
             {
               name: 'subheadline',
-              type: 'textarea',
+              type: 'richText',
+              admin: {
+                description: 'Hero subtitle with rich text formatting (bold, italic, links)',
+              },
             },
             {
               name: 'cta',
@@ -246,7 +249,10 @@ export const Pages: CollectionConfig = {
             },
             {
               name: 'subtitle',
-              type: 'textarea',
+              type: 'richText',
+              admin: {
+                description: 'Section subtitle with rich text formatting',
+              },
             },
             {
               name: 'items',
@@ -275,8 +281,11 @@ export const Pages: CollectionConfig = {
                 },
                 {
                   name: 'description',
-                  type: 'textarea',
+                  type: 'richText',
                   required: true,
+                  admin: {
+                    description: 'Feature description with rich text formatting',
+                  },
                 },
               ],
             },
@@ -296,7 +305,10 @@ export const Pages: CollectionConfig = {
             },
             {
               name: 'subtitle',
-              type: 'textarea',
+              type: 'richText',
+              admin: {
+                description: 'Section subtitle with rich text formatting',
+              },
             },
             {
               name: 'steps',
@@ -327,8 +339,11 @@ export const Pages: CollectionConfig = {
                 },
                 {
                   name: 'description',
-                  type: 'textarea',
+                  type: 'richText',
                   required: true,
+                  admin: {
+                    description: 'Step description with rich text formatting',
+                  },
                 },
                 {
                   name: 'color',
@@ -357,7 +372,10 @@ export const Pages: CollectionConfig = {
             },
             {
               name: 'subtitle',
-              type: 'textarea',
+              type: 'richText',
+              admin: {
+                description: 'Section subtitle with rich text formatting',
+              },
             },
             {
               name: 'form',
