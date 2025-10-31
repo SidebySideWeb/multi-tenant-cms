@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 
 import { ensureUniqueSlug } from './hooks/ensureUniqueSlug'
 import { convertRichTextValue } from './hooks/convertRichTextValue'
+import { convertRichTextFields } from './hooks/convertRichTextFields'
 import { superAdminOrTenantAdminAccess } from '@/collections/Pages/access/superAdminOrTenantAdmin'
 
 export const Pages: CollectionConfig = {
@@ -14,6 +15,11 @@ export const Pages: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'title',
+  },
+  hooks: {
+    afterRead: [
+      convertRichTextFields,
+    ],
   },
   fields: [
     {
