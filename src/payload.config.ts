@@ -32,6 +32,7 @@ export default buildConfig({
     user: 'users',
   },
   cors: allowedOrigins,
+  serverURL: process.env.PAYLOAD_PUBLIC_SERVER_URL || process.env.NEXT_PUBLIC_PAYLOAD_URL || 'http://localhost:3000',
   collections: [Pages, Users, Tenants, Media],
   // db: mongooseAdapter({
   //   url: process.env.DATABASE_URI as string,
