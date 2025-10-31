@@ -1,92 +1,292 @@
-# Payload Multi-Tenant Example
+# Multi-Tenant Payload CMS
 
-This example demonstrates how to achieve a multi-tenancy in [Payload](https://github.com/payloadcms/payload). Tenants are separated by a `Tenants` collection.
+A production-ready, multi-tenant Content Management System built with Payload CMS and Next.js. Designed for managing multiple client websites from a single CMS instance.
 
-## Quick Start
+## 🎯 Overview
 
-To spin up this example locally, follow these steps:
+This CMS allows you to:
+- Manage multiple client websites from one admin panel
+- Automatically create tenants with pre-populated content
+- Use template-based page structures for quick client onboarding
+- Deploy frontend sites independently while sharing one CMS backend
 
-1. Run the following command to create a project from the example:
+## ✨ Features
 
-- `npx create-payload-app --example multi-tenant`
+- **Multi-Tenancy**: Domain-based and slug-based tenant routing
+- **Template System**: Pre-defined page templates for different site types
+- **Automation Scripts**: Create tenants and frontend projects automatically
+- **Flexible Content**: Conditional fields based on page types
+- **Media Management**: Supabase Storage integration for file uploads
+- **Access Control**: Role-based permissions (super-admin, tenant-admin, tenant-viewer)
+- **PostgreSQL Database**: Scalable Supabase PostgreSQL backend
+- **API Client**: Ready-to-use utilities for frontend integration
 
-2. `cp .env.example .env` to copy the example environment variables
-
-3. `pnpm dev`, `yarn dev` or `npm run dev` to start the server
-   - Press `y` when prompted to seed the database
-4. `open http://localhost:3000` to access the home page
-5. `open http://localhost:3000/admin` to access the admin panel
-
-### Default users
-
-The seed script seeds 3 tenants.
-Login with email `demo@payloadcms.com` and password `demo`
-
-## How it works
-
-A multi-tenant Payload application is a single server that hosts multiple "tenants". Examples of tenants may be your agency's clients, your business conglomerate's organizations, or your SaaS customers.
-
-Each tenant has its own set of users, pages, and other data that is scoped to that tenant. This means that your application will be shared across tenants but the data will be scoped to each tenant.
-
-### Collections
-
-See the [Collections](https://payloadcms.com/docs/configuration/collections) docs for details on how to extend any of this functionality.
-
-- #### Users
-
-  The `users` collection is auth-enabled and encompasses both app-wide and tenant-scoped users based on the value of their `roles` and `tenants` fields. Users with the role `super-admin` can manage your entire application, while users with the _tenant role_ of `admin` have limited access to the platform and can manage only the tenant(s) they are assigned to, see [Tenants](#tenants) for more details.
-
-  For additional help with authentication, see the official [Auth Example](https://github.com/payloadcms/payload/tree/main/examples/cms#readme) or the [Authentication](https://payloadcms.com/docs/authentication/overview#authentication-overview) docs.
-
-- #### Tenants
-
-  A `tenants` collection is used to achieve tenant-based access control. Each user is assigned an array of `tenants` which includes a relationship to a `tenant` and their `roles` within that tenant. You can then scope any document within your application to any of your tenants using a simple [relationship](https://payloadcms.com/docs/fields/relationship) field on the `users` or `pages` collections, or any other collection that your application needs. The value of this field is used to filter documents in the admin panel and API to ensure that users can only access documents that belong to their tenant and are within their role. See [Access Control](#access-control) for more details.
-
-  For more details on how to extend this functionality, see the [Payload Access Control](https://payloadcms.com/docs/access-control/overview) docs.
-
-  **Domain-based Tenant Setting**:
-
-  This example also supports domain-based tenant selection, where tenants can be associated with a specific domain. If a tenant is associated with a domain (e.g., `gold.localhost:3000`), when a user logs in from that domain, they will be automatically scoped to the matching tenant. This is accomplished through an optional `afterLogin` hook that sets a `payload-tenant` cookie based on the domain.
-
-For the domain portion of the example to function properly, you will need to add the following entries to your system's `/etc/hosts` file:
+## 🏗️ Architecture
 
 ```
-127.0.0.1 gold.localhost silver.localhost bronze.localhost
+multi-tenant-cms/          (This repo - CMS Backend)
+├── src/
+│   ├── collections/        (Tenants, Pages, Users, Media)
+│   ├── templates/         (Page template definitions)
+│   ├── utilities/         (API clients, helpers)
+│   └── payload.config.ts  (Main configuration)
+└── scripts/               (Automation scripts)
+
+ftiaxesite/                (Frontend - Separate repo)
+└── Connects to CMS via API
 ```
 
-- #### Pages
+## 🚀 Quick Start
 
-  Each page is assigned a `tenant`, which is used to control access and scope API requests. Only users with the `super-admin` role can create pages, and pages are assigned to specific tenants. Other users can view only the pages assigned to the tenant they are associated with.
+### Prerequisites
 
-## Access control
+- Node.js 18+ or 20+
+- PostgreSQL database (Supabase recommended)
+- Supabase Storage account (for media files)
 
-Basic role-based access control is set up to determine what users can and cannot do based on their roles, which are:
+### Installation
 
-- `super-admin`: They can access the Payload admin panel to manage your multi-tenant application. They can see all tenants and make all operations.
-- `user`: They can only access the Payload admin panel if they are a tenant-admin, in which case they have a limited access to operations based on their tenant (see below).
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/SidebySideWeb/multi-tenant-cms.git
+   cd multi-tenant-cms
+   ```
 
-This applies to each collection in the following ways:
+2. **Install dependencies**
+   ```bash
+   pnpm install
+   ```
 
-- `users`: Only super-admins, tenant-admins, and the user themselves can access their profile. Anyone can create a user, but only these admins can delete users. See [Users](#users) for more details.
-- `tenants`: Only super-admins and tenant-admins can read, create, update, or delete tenants. See [Tenants](#tenants) for more details.
-- `pages`: Everyone can access pages, but only super-admins and tenant-admins can create, update, or delete them.
+3. **Configure environment variables**
+   ```bash
+   cp .env.example .env
+   ```
+   
+   Edit `.env` with your configuration:
+   ```env
+   # Database
+   POSTGRES_URL=postgresql://...
+   
+   # Storage (Supabase)
+   S3_ENDPOINT=https://...
+   S3_BUCKET_NAME=...
+   S3_ACCESS_KEY_ID=...
+   S3_SECRET_ACCESS_KEY=...
+   S3_REGION=us-east-1
+   
+   # Payload
+   PAYLOAD_SECRET=your-secret-key
+   ALLOWED_ORIGINS=*
+   ```
 
-> If you have versions and drafts enabled on your pages, you will need to add additional read access control condition to check the user's tenants that prevents them from accessing draft documents of other tenants.
+4. **Run migrations**
+   ```bash
+   pnpm seed
+   ```
 
-For more details on how to extend this functionality, see the [Payload Access Control](https://payloadcms.com/docs/access-control/overview#access-control) docs.
+5. **Start development server**
+   ```bash
+   pnpm dev
+   ```
 
-## CORS
+6. **Access admin panel**
+   - Open: http://localhost:3000/admin
+   - Create your first super-admin user
 
-This multi-tenant setup requires an open CORS policy. Since each tenant contains a dynamic list of domains, there's no way to know specifically which domains to whitelist at runtime without significant performance implications. This also means that the `serverURL` is not set, as this scopes all requests to a single domain.
+## 📋 Usage
 
-Alternatively, if you know the domains of your tenants ahead of time and these values won't change often, you could simply remove the `domains` field altogether and instead use static values.
+### Creating a New Tenant
 
-For more details on this, see the [CORS](https://payloadcms.com/docs/production/preventing-abuse#cross-origin-resource-sharing-cors) docs.
+#### Option 1: Via Admin Panel
+1. Go to **Tenants** → **Create New**
+2. Fill in:
+   - **Name**: Client name
+   - **Slug**: URL slug (e.g., "mitsos")
+   - **Template**: Select template (e.g., "ftiaxesite")
+   - **Domain**: Optional (e.g., "mitsos.localhost")
+3. Click **Save**
+4. ✅ Pages are automatically created!
 
-## Front-end
+#### Option 2: Via Automation Script
+```bash
+# 1. Create frontend project
+pnpm tsx scripts/1-create-frontend-project.ts mitsos
 
-The frontend is scaffolded out in this example directory. You can view the code for rendering pages at `/src/app/(app)/[tenant]/[...slug]/page.tsx`. This is a starter template, you may need to adjust the app to better fit your needs.
+# 2. Add your V0.app template code to ../mitsos/
 
-## Questions
+# 3. Generate template definition
+pnpm tsx scripts/2-generate-template.ts mitsos
 
-If you have any issues or questions, reach out to us on [Discord](https://discord.com/invite/payload) or start a [GitHub discussion](https://github.com/payloadcms/payload/discussions).
+# 4. Import template in src/templates/index.ts
+
+# 5. Create tenant
+pnpm tsx scripts/3-create-tenant.ts mitsos "Mitsos Site" mitsos
+
+# 6. Generate documentation
+pnpm tsx scripts/4-generate-docs.ts mitsos mitsos
+```
+
+### Managing Content
+
+1. **Access CMS**: http://localhost:3000/admin
+2. **Filter by tenant**: Use tenant filter in Pages collection
+3. **Edit pages**: Click on any page to edit content
+4. **Upload media**: Go to Media collection, upload files
+
+### Frontend Integration
+
+Frontend sites connect to the CMS via REST API:
+
+```typescript
+import { createClientWithTenant } from '@/lib/payload-client'
+
+const client = createClientWithTenant(hostname)
+const page = await client.getPage('home')
+```
+
+See `ftiaxesite` project for complete integration example.
+
+## 📚 Documentation
+
+- **[WORKFLOW_GUIDE.md](./WORKFLOW_GUIDE.md)** - Complete workflow for creating tenants
+- **[TENANT_TEMPLATE_SYSTEM.md](./TENANT_TEMPLATE_SYSTEM.md)** - Template system overview
+- **[REMOTE_CMS_SETUP.md](./REMOTE_CMS_SETUP.md)** - Connecting scripts to deployed CMS
+- **[SUPABASE_DATABASE_SETUP.md](./SUPABASE_DATABASE_SETUP.md)** - Database configuration
+- **[SUPABASE_STORAGE_SETUP.md](./SUPABASE_STORAGE_SETUP.md)** - Storage configuration
+- **[ENV_VARIABLES.md](./ENV_VARIABLES.md)** - Environment variables reference
+
+## 🎨 Templates
+
+### Available Templates
+
+- **ftiaxesite** - Landing page template with hero, features, process, contact, and footer sections
+
+### Adding New Templates
+
+When you convert a V0.app template:
+
+1. Create template definition in `src/templates/index.ts`
+2. Add template option in `src/collections/Tenants/index.ts`
+3. Frontend project will use the template structure
+
+See **[TEMPLATE_INTEGRATION_TEMPLATE.md](../TEMPLATE_INTEGRATION_TEMPLATE.md)** for details.
+
+## 🔧 Development
+
+### Available Scripts
+
+```bash
+# Development
+pnpm dev              # Start dev server
+
+# Build
+pnpm build            # Build for production
+pnpm start            # Start production server
+
+# Payload
+pnpm payload          # Run Payload CLI commands
+pnpm generate:importmap # Generate admin import map
+pnpm generate:types   # Generate TypeScript types
+
+# Database
+pnpm seed             # Run migrations
+pnpm seed:fresh       # Drop database and recreate (⚠️ destructive)
+```
+
+### Project Structure
+
+```
+src/
+├── collections/          # Payload collections
+│   ├── Tenants/         # Tenant management
+│   ├── Pages/           # Page content
+│   ├── Users/           # User management
+│   └── Media/           # Media files
+├── templates/            # Page template definitions
+├── utilities/            # Helper functions
+│   ├── populateTenantPages.ts  # Auto-populate pages
+│   └── remotePayloadClient.ts # API client for scripts
+├── access/              # Access control functions
+└── payload.config.ts    # Main configuration
+
+scripts/                 # Automation scripts
+├── 1-create-frontend-project.ts
+├── 2-generate-template.ts
+├── 3-create-tenant.ts
+└── 4-generate-docs.ts
+```
+
+## 🌐 Deployment
+
+### Deploy CMS to Production
+
+1. **Deploy to Vercel/Railway/Render**
+2. **Set environment variables** in hosting platform
+3. **Run migrations**: `pnpm seed` (first time only)
+4. **Configure CORS**: Set `ALLOWED_ORIGINS` with your frontend domains
+
+### Connect Frontend Sites
+
+Each frontend site needs:
+```env
+NEXT_PUBLIC_PAYLOAD_URL=https://your-cms-domain.com
+```
+
+## 🔐 Access Control
+
+### Roles
+
+- **super-admin**: Full access to all tenants
+- **tenant-admin**: Manage content for assigned tenants
+- **tenant-viewer**: Read-only access to assigned tenants
+
+### Creating Users
+
+1. Go to **Users** → **Create New**
+2. Assign **Roles** and **Tenants**
+3. User can log in and manage their tenant content
+
+## 📦 Collections
+
+### Tenants
+- Name, slug, domain
+- Template selection
+- Public read access control
+
+### Pages
+- **Standard Pages**: Simple content pages
+- **Landing Pages**: Full sections (header, hero, features, process, contact, footer)
+- **Blog Posts**: Article structure
+- **Custom**: Custom structure
+
+### Media
+- File uploads via Supabase Storage
+- Alt text for accessibility
+- Tenant-isolated
+
+### Users
+- Email/password authentication
+- Role-based access
+- Multi-tenant assignments
+
+## 🛠️ Troubleshooting
+
+See **[TROUBLESHOOTING.md](./TROUBLESHOOTING.md)** for common issues and solutions.
+
+## 📝 License
+
+MIT
+
+## 🤝 Contributing
+
+This is a private project for managing client websites. For questions or issues, contact the project maintainer.
+
+## 🔗 Related Projects
+
+- **ftiaxesite** - Example frontend site: https://github.com/SidebySideWeb/ftiaxesite
+- **Payload CMS** - https://payloadcms.com
+- **Next.js** - https://nextjs.org
+
+---
+
+**Built with ❤️ for managing multiple client websites efficiently**
