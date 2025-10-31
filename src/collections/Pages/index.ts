@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
 import { ensureUniqueSlug } from './hooks/ensureUniqueSlug'
+import { convertRichTextValue } from './hooks/convertRichTextValue'
 import { superAdminOrTenantAdminAccess } from '@/collections/Pages/access/superAdminOrTenantAdmin'
 
 export const Pages: CollectionConfig = {
@@ -200,6 +201,11 @@ export const Pages: CollectionConfig = {
               admin: {
                 description: 'Hero subtitle with rich text formatting (bold, italic, links)',
               },
+              hooks: {
+                beforeValidate: [
+                  convertRichTextValue,
+                ],
+              },
             },
             {
               name: 'cta',
@@ -253,6 +259,11 @@ export const Pages: CollectionConfig = {
               admin: {
                 description: 'Section subtitle with rich text formatting',
               },
+              hooks: {
+                beforeValidate: [
+                  convertRichTextValue,
+                ],
+              },
             },
             {
               name: 'items',
@@ -286,6 +297,11 @@ export const Pages: CollectionConfig = {
                   admin: {
                     description: 'Feature description with rich text formatting',
                   },
+                  hooks: {
+                    beforeValidate: [
+                      convertRichTextValue,
+                    ],
+                  },
                 },
               ],
             },
@@ -308,6 +324,11 @@ export const Pages: CollectionConfig = {
               type: 'richText',
               admin: {
                 description: 'Section subtitle with rich text formatting',
+              },
+              hooks: {
+                beforeValidate: [
+                  convertRichTextValue,
+                ],
               },
             },
             {
@@ -375,6 +396,11 @@ export const Pages: CollectionConfig = {
               type: 'richText',
               admin: {
                 description: 'Section subtitle with rich text formatting',
+              },
+              hooks: {
+                beforeValidate: [
+                  convertRichTextValue,
+                ],
               },
             },
             {
