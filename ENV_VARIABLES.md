@@ -6,6 +6,11 @@ Copy these variables to your `.env` file:
 # Payload CMS Configuration
 PAYLOAD_SECRET=your-secret-key-here
 
+# CMS URL (for production deployments)
+# Used by frontend sites to connect to the CMS
+# NEXT_PUBLIC_PAYLOAD_URL=https://cms.ftiaxesite.gr
+# PAYLOAD_PUBLIC_SERVER_URL=https://cms.ftiaxesite.gr
+
 # Supabase PostgreSQL Database Connection
 # Use the pooled connection for better performance
 POSTGRES_URL=postgresql://postgres.fesjvdynrrarrljwbqdh:P0pb5gBTfgByzplq@aws-1-eu-west-1.pooler.supabase.com:6543/postgres

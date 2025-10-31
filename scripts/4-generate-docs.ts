@@ -110,7 +110,7 @@ This guide explains how to manage content for **${tenantName}** in Payload CMS.
 
 ## 📝 Accessing Payload CMS
 
-1. Go to: http://localhost:3000/admin
+1. Go to: https://cms.ftiaxesite.gr/admin
 2. Log in with your credentials
 3. Navigate to **Pages** collection
 4. Filter by tenant: **${tenantSlug}**

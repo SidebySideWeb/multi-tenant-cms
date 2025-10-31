@@ -127,7 +127,7 @@ async function createTenant(
     }
 
     console.log(`📋 Next steps:`)
-    console.log(`   1. Go to Payload Admin: http://localhost:3000/admin`)
+    console.log(`   1. Go to Payload Admin: https://cms.ftiaxesite.gr/admin`)
     console.log(`   2. Navigate to Pages → Filter by tenant: "${slug}"`)
     console.log(`   3. Edit page content as needed`)
     console.log(`   4. Run: pnpm tsx scripts/4-generate-docs.ts ${projectName} ${slug}`)

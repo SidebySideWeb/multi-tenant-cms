@@ -132,30 +132,50 @@ export const Pages: CollectionConfig = {
             {
               name: 'menu',
               type: 'array',
+              admin: {
+                description: 'Navigation menu items. Use anchor links like "features", "process", or "contact" for sections on the same page, or full URLs like "/about" for other pages.',
+              },
               fields: [
                 {
                   name: 'label',
                   type: 'text',
                   required: true,
+                  admin: {
+                    description: 'Menu item label (e.g., "Λειτουργίες", "Διαδικασία")',
+                  },
                 },
                 {
                   name: 'link',
                   type: 'text',
                   required: true,
+                  admin: {
+                    description: 'Anchor link (e.g., "features", "process", "contact") or page URL (e.g., "/about"). Anchor links scroll to sections on the same page.',
+                    placeholder: 'features',
+                  },
                 },
               ],
             },
             {
               name: 'cta',
               type: 'group',
+              admin: {
+                description: 'Call-to-action button in header',
+              },
               fields: [
                 {
                   name: 'label',
                   type: 'text',
+                  admin: {
+                    description: 'Button label (e.g., "Φτιάξε το site σου")',
+                  },
                 },
                 {
                   name: 'link',
                   type: 'text',
+                  admin: {
+                    description: 'Anchor link (e.g., "contact") or page URL. Anchor links scroll to sections on the same page.',
+                    placeholder: 'contact',
+                  },
                 },
               ],
             },

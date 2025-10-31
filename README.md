@@ -225,11 +225,13 @@ scripts/                 # Automation scripts
 3. **Run migrations**: `pnpm seed` (first time only)
 4. **Configure CORS**: Set `ALLOWED_ORIGINS` with your frontend domains
 
+**Production URL:** `https://cms.ftiaxesite.gr`
+
 ### Connect Frontend Sites
 
 Each frontend site needs:
 ```env
-NEXT_PUBLIC_PAYLOAD_URL=https://your-cms-domain.com
+NEXT_PUBLIC_PAYLOAD_URL=https://cms.ftiaxesite.gr
 ```
 
 ## 🔐 Access Control
