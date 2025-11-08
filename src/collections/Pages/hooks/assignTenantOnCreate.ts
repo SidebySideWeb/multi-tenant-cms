@@ -3,7 +3,7 @@ import type { CollectionBeforeValidateHook } from 'payload'
 import { extractID } from '@/utilities/extractID'
 import { getUserTenantIDs } from '@/utilities/getUserTenantIDs'
 
-export const assignTenantOnCreate: CollectionBeforeValidateHook = async ({ data, originalDoc, operation, req }) => {
+export const assignTenantOnCreate: CollectionBeforeValidateHook = async ({ data = {}, originalDoc, operation, req }) => {
   // Always preserve the existing tenant on update operations
   if (operation === 'update') {
     if (!data.tenant && originalDoc?.tenant) {
