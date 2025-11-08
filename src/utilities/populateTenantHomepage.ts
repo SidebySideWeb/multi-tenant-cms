@@ -146,7 +146,7 @@ export async function populateTenantHomepage(
       and: [
         {
           slug: {
-            equals: 'home',
+            equals: 'ftiaxesite-homepage',
           },
         },
         {
@@ -159,6 +159,45 @@ export async function populateTenantHomepage(
     limit: 1,
   })
 
+  const tenantIdNumber = typeof tenantId === 'string' ? Number(tenantId) : tenantId
+
+  const pageTypeResult = await payload.find({
+    collection: 'page-types',
+    where: {
+      and: [
+        {
+          slug: {
+            equals: 'home-ftiaxesite',
+          },
+        },
+        {
+          tenant: {
+            equals: tenantIdNumber,
+          },
+        },
+      ],
+    },
+    limit: 1,
+  })
+
+  const pageTypeId = pageTypeResult.docs[0]?.id
+
+  if (!pageTypeId) {
+    throw new Error('Unable to locate homepage page type for tenant')
+  }
+
+  const sectionsPayload = {
+    hero: {
+      headline: data.hero.headline,
+      subheadline: data.hero.subheadline,
+      cta: data.hero.cta,
+      stats: data.hero.stats,
+    },
+    features: data.features as any,
+    process: data.process as any,
+    contact: data.contact,
+  }
+
   // If homepage already exists, update it instead of creating new
   if (existingHomepage.docs.length > 0) {
     await payload.update({
@@ -166,51 +205,25 @@ export async function populateTenantHomepage(
       id: existingHomepage.docs[0].id,
       data: {
         title: data.hero.headline,
-        description: data.hero.subheadline,
-        pageType: 'landing',
-        sections: {
-          header: data.header,
-          hero: {
-            headline: data.hero.headline,
-            subheadline: data.hero.subheadline,
-            cta: data.hero.cta,
-            stats: data.hero.stats,
-            // Note: image will need to be uploaded separately and referenced
-          },
-          features: data.features as any, // Type assertion needed for icon/color unions
-          process: data.process as any, // Type assertion needed for icon/color unions
-          contact: data.contact,
-          footer: data.footer,
-        },
+        summary: data.hero.subheadline,
+        pageType: pageTypeId,
+        sections: sectionsPayload,
+        content: sectionsPayload,
       },
     })
   } else {
     // Create new homepage
-    // Convert tenantId to number if it's a string (database uses numeric IDs)
-    const tenantIdNumber = typeof tenantId === 'string' ? Number(tenantId) : tenantId
-    
     await payload.create({
       collection: 'pages',
       data: {
-        slug: 'home',
-        tenant: tenantIdNumber as any, // Type assertion needed for tenant ID
+        slug: 'ftiaxesite-homepage',
+        tenant: tenantIdNumber as any,
         title: data.hero.headline,
-        description: data.hero.subheadline,
-        pageType: 'landing',
-        sections: {
-          header: data.header,
-          hero: {
-            headline: data.hero.headline,
-            subheadline: data.hero.subheadline,
-            cta: data.hero.cta,
-            stats: data.hero.stats,
-            // Note: image will need to be uploaded separately and referenced
-          },
-          features: data.features as any, // Type assertion needed for icon/color unions
-          process: data.process as any, // Type assertion needed for icon/color unions
-          contact: data.contact,
-          footer: data.footer,
-        },
+        summary: data.hero.subheadline,
+        pageType: pageTypeId,
+        status: 'published',
+        sections: sectionsPayload,
+        content: sectionsPayload,
       },
     })
   }
