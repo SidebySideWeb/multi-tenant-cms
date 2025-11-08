@@ -83,7 +83,7 @@ export const Pages: CollectionConfig = {
         description: 'Page template that defines the editable fields and layout for this tenant.',
       },
       filterOptions: ({ data, user }: FilterOptionsProps<any>) => {
-        const tenantId = inferTenantFromData({ data, user })
+        const tenantId = inferTenantFromData({ data })
 
         if (tenantId) {
           return {
