@@ -1,11 +1,17 @@
 'use client'
 
 import React, { useEffect, useMemo, useState } from 'react'
-import type { JSONFieldProps as PayloadJSONFieldProps } from '@payloadcms/ui/fields/JSON'
 import { fieldBaseClass } from '@payloadcms/ui/fields/shared'
 import { useField } from '@payloadcms/ui/forms/useField'
 import { useConfig } from '@payloadcms/ui/providers/Config'
 import './PageContentField.scss'
+
+type PayloadJSONFieldProps = {
+  path: string
+  value?: any
+  onChange?: (value: any) => void
+  [key: string]: unknown
+}
 
 type RelationshipValue =
   | string
@@ -586,9 +592,9 @@ const DynamicPageContentEditor: React.FC<{
   )
 }
 
-const JSONFallbackEditor: React.FC<Omit<PayloadJSONFieldProps, 'field'>> = ({ value, onChange }) => {
+const JSONFallbackEditor: React.FC<PayloadJSONFieldProps> = ({ value, onChange }) => {
   const configContext = useConfigSafe()
-  const readonly = !fieldState || !configContext
+  const readonly = !configContext
   const [stringValue, setStringValue] = useState(() => JSON.stringify(value ?? {}, null, 2))
   const [parseError, setParseError] = useState<string | null>(null)
 
@@ -623,7 +629,7 @@ const JSONFallbackEditor: React.FC<Omit<PayloadJSONFieldProps, 'field'>> = ({ va
   )
 }
 
-interface PageContentFieldInnerProps extends JSONFieldClientProps {
+interface PageContentFieldInnerProps extends PayloadJSONFieldProps {
   fieldState: ReturnType<typeof useField<any>>
   pageTypeFieldState: ReturnType<typeof useField<RelationshipValue>>
 }
