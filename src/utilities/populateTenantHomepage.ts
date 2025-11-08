@@ -217,7 +217,6 @@ export async function populateTenantHomepage(
         summary: data.hero.subheadline,
         pageType: pageTypeId,
         sections: sectionsPayload,
-        headerFooterPageSlug: headerFooterSlug,
         content: contentPayload,
       },
     })
@@ -233,7 +232,6 @@ export async function populateTenantHomepage(
         pageType: pageTypeId,
         status: 'published',
         sections: sectionsPayload,
-        headerFooterPageSlug: headerFooterSlug,
         content: contentPayload,
       },
     })
