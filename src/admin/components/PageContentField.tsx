@@ -1,9 +1,10 @@
 'use client'
 
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { fieldBaseClass } from '@payloadcms/ui/fields/shared'
 import { useField } from '@payloadcms/ui/forms/useField'
 import { useConfig } from '@payloadcms/ui/providers/Config'
+import { RichTextField as LexicalRichTextField, buildDefaultEditorState } from '@payloadcms/richtext-lexical/client'
 import './PageContentField.scss'
 
 type PayloadJSONFieldProps = {
@@ -60,7 +61,20 @@ interface ArrayField extends BaseFieldCommon {
   fields?: SchemaField[]
 }
 
-type SchemaField = SimpleField | SelectField | GroupField | ArrayField
+interface RichTextFieldSchema extends BaseFieldCommon {
+  type: 'richText'
+}
+
+type SchemaField = SimpleField | SelectField | GroupField | ArrayField | RichTextFieldSchema
+
+const isLexicalState = (value: unknown): value is { root: any } =>
+  typeof value === 'object' && value !== null && 'root' in (value as Record<string, unknown>)
+
+const toLexicalEditorState = (value: unknown) => {
+  if (isLexicalState(value)) return value as any
+  const text = typeof value === 'string' ? value : ''
+  return buildDefaultEditorState({ text })
+}
 
 interface SchemaGroup {
   key: string
@@ -219,7 +233,7 @@ const normalizeField = (raw: any): SchemaField | null => {
       description,
       required,
       admin,
-      type: 'textarea',
+      type: 'richText',
     }
   }
 

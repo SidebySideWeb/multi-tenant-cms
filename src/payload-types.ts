@@ -145,6 +145,10 @@ export interface Page {
    */
   summary?: string | null;
   /**
+   * Slug of the shared header/footer page used by this homepage.
+   */
+  headerFooterPageSlug?: string | null;
+  /**
    * Διαχειριστείτε τα περιεχόμενα των ενοτήτων της σελίδας.
    */
   sections?: {
@@ -156,7 +160,21 @@ export interface Page {
       /**
        * Υπότιτλος hero με πολλαπλές γραμμές.
        */
-      subheadline?: string | null;
+      subheadline?: {
+        root: {
+          type: string;
+          children: {
+            type: any;
+            version: number;
+            [k: string]: unknown;
+          }[];
+          direction: ('ltr' | 'rtl') | null;
+          format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+          indent: number;
+          version: number;
+        };
+        [k: string]: unknown;
+      } | null;
       cta?: string | null;
       /**
        * Εικόνα hero.
@@ -546,6 +564,7 @@ export interface PagesSelect<T extends boolean = true> {
   status?: T;
   pageType?: T;
   summary?: T;
+  headerFooterPageSlug?: T;
   sections?:
     | T
     | {

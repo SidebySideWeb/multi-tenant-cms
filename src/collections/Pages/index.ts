@@ -169,8 +169,9 @@ export const Pages: CollectionConfig = {
             if (value && typeof value === 'object' && Object.keys(value).length > 0) {
               return value
             }
-            if (siblingData?.content?.sections) {
-              return siblingData.content.sections
+            const sections = siblingData?.content?.sections
+            if (sections && typeof sections === 'object') {
+              return sections
             }
             return value
           },
@@ -180,8 +181,9 @@ export const Pages: CollectionConfig = {
             if (value && typeof value === 'object' && Object.keys(value).length > 0) {
               return value
             }
-            if (siblingData?.content?.sections) {
-              return siblingData.content.sections
+            const sections = siblingData?.content?.sections
+            if (sections && typeof sections === 'object') {
+              return sections
             }
             return value
           },
@@ -202,7 +204,7 @@ export const Pages: CollectionConfig = {
             },
             {
               name: 'subheadline',
-              type: 'textarea',
+              type: 'richText',
               admin: {
                 description: 'Υπότιτλος hero με πολλαπλές γραμμές.',
               },
@@ -433,8 +435,9 @@ export const Pages: CollectionConfig = {
             if (value && typeof value === 'object' && Object.keys(value).length > 0) {
               return value
             }
-            if (siblingData?.slug === 'header-footer-ftiaxesite' && siblingData?.content) {
-              return siblingData.content
+            const layout = siblingData?.content?.shared?.layout ?? siblingData?.content
+            if (layout && typeof layout === 'object') {
+              return layout
             }
             return value
           },
@@ -444,8 +447,9 @@ export const Pages: CollectionConfig = {
             if (value && typeof value === 'object' && Object.keys(value).length > 0) {
               return value
             }
-            if (siblingData?.slug === 'header-footer-ftiaxesite' && siblingData?.content) {
-              return siblingData.content
+            const layout = siblingData?.content?.shared?.layout ?? siblingData?.content
+            if (layout && typeof layout === 'object') {
+              return layout
             }
             return value
           },

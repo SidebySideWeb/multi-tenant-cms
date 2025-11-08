@@ -1,4 +1,13 @@
 import type { Payload } from 'payload'
+import { buildDefaultEditorState } from '@payloadcms/richtext-lexical'
+
+const toLexicalState = (value: unknown) => {
+  if (value && typeof value === 'object' && (value as any).root) {
+    return value
+  }
+  const text = typeof value === 'string' ? value : ''
+  return buildDefaultEditorState({ text })
+}
 
 /**
  * Default homepage data structure matching ftiaxesite frontend defaultData
@@ -191,7 +200,7 @@ export async function populateTenantHomepage(
   const sectionsPayload = {
     hero: {
       headline: data.hero.headline,
-      subheadline: data.hero.subheadline,
+      subheadline: toLexicalState(data.hero.subheadline),
       cta: data.hero.cta,
       stats: data.hero.stats,
     },

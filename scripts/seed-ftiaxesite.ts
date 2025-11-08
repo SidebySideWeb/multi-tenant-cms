@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url'
 import payload from 'payload'
 
 import config from '../src/payload.config'
+import { buildDefaultEditorState } from '@payloadcms/richtext-lexical'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -300,7 +301,7 @@ const getFtiaxesiteSeedData = () => {
         label: 'Hero Section',
         fields: [
           { name: 'headline', label: 'Headline', type: 'text', required: true },
-          { name: 'subheadline', label: 'Subheadline', type: 'textarea' },
+          { name: 'subheadline', label: 'Subheadline', type: 'richText' },
           { name: 'cta', label: 'CTA Button Label', type: 'text' },
           { name: 'image', label: 'Image URL', type: 'text' },
           {
@@ -443,8 +444,9 @@ const getFtiaxesiteSeedData = () => {
     },
     hero: {
       headline: 'Φτιάξε το site σου σε 48 ώρες — από 250€',
-      subheadline:
-        'Με τη δύναμη της Τεχνητής Νοημοσύνης, δημιουργούμε γρήγορα, οικονομικά και επαγγελματικά websites.',
+      subheadline: buildDefaultEditorState({
+        text: 'Με τη δύναμη της Τεχνητής Νοημοσύνης, δημιουργούμε γρήγορα, οικονομικά και επαγγελματικά websites.',
+      }),
       cta: 'Ξεκίνα τώρα',
       stats: [
         { value: '48h', label: 'Παράδοση' },
