@@ -10,7 +10,7 @@ import { extractID } from '@/utilities/extractID'
 import { getUserTenantIDs } from '@/utilities/getUserTenantIDs'
 import { isSuperAdmin } from '@/access/isSuperAdmin'
 
-const inferTenantFromData = ({ data }: FilterOptionsProps<any>): string | number | null => {
+const inferTenantFromData = ({ data }: { data?: any }): string | number | null => {
   if (!data) {
     return null
   }
