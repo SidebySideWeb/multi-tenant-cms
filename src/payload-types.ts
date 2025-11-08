@@ -68,6 +68,7 @@ export interface Config {
   blocks: {};
   collections: {
     pages: Page;
+    'page-types': PageType;
     users: User;
     tenants: Tenant;
     media: Media;
@@ -79,6 +80,7 @@ export interface Config {
   collectionsJoins: {};
   collectionsSelect: {
     pages: PagesSelect<false> | PagesSelect<true>;
+    'page-types': PageTypesSelect<false> | PageTypesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     tenants: TenantsSelect<false> | TenantsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
@@ -92,7 +94,7 @@ export interface Config {
   };
   globals: {};
   globalsSelect: {};
-  locale: null;
+  locale: 'el' | 'en';
   user: User & {
     collection: 'users';
   };
@@ -120,6 +122,8 @@ export interface UserAuthOperations {
   };
 }
 /**
+ * Pages are scoped per tenant. Each page is linked to a tenant-specific page type and stores its editable content as JSON data.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "pages".
  */
@@ -127,89 +131,39 @@ export interface Page {
   id: number;
   tenant?: (number | null) | Tenant;
   title: string;
+  /**
+   * Unique per tenant. Used in the page URL. Example: home, about, header-footer-ftiaxesite.
+   */
   slug: string;
+  status?: ('draft' | 'published') | null;
   /**
-   * Page type determines which fields are available
+   * Page template that defines the editable fields and layout for this tenant.
    */
-  pageType?: ('standard' | 'landing' | 'blog' | 'custom') | null;
+  pageType: number | PageType;
   /**
-   * Meta description for SEO
+   * Optional internal summary describing the purpose of this page.
    */
-  description?: string | null;
+  summary?: string | null;
   /**
-   * Main page content (used for standard pages and blog posts)
-   */
-  content?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  /**
-   * Featured image for the page
-   */
-  featuredImage?: (number | null) | Media;
-  meta?: {
-    /**
-     * Custom meta title (defaults to page title)
-     */
-    title?: string | null;
-    /**
-     * Custom meta description
-     */
-    description?: string | null;
-    /**
-     * Open Graph image for social sharing
-     */
-    ogImage?: (number | null) | Media;
-  };
-  /**
-   * Publication date
-   */
-  publishedAt?: string | null;
-  /**
-   * Page sections for landing pages (only shown when pageType is "landing")
+   * Διαχειριστείτε τα περιεχόμενα των ενοτήτων της σελίδας.
    */
   sections?: {
     /**
-     * Header/Navigation configuration
-     */
-    header?: {
-      logo_text?: string | null;
-      menu?:
-        | {
-            label: string;
-            link: string;
-            id?: string | null;
-          }[]
-        | null;
-      cta?: {
-        label?: string | null;
-        link?: string | null;
-      };
-    };
-    /**
-     * Hero section at the top of the page
+     * Hero section στην αρχή της σελίδας.
      */
     hero: {
       headline: string;
+      /**
+       * Υπότιτλος hero με πολλαπλές γραμμές.
+       */
       subheadline?: string | null;
       cta?: string | null;
       /**
-       * Hero image/illustration
+       * Εικόνα hero.
        */
       image?: (number | null) | Media;
       /**
-       * Statistics displayed below CTA
+       * Στατιστικά κάτω από το CTA.
        */
       stats?:
         | {
@@ -220,13 +174,13 @@ export interface Page {
         | null;
     };
     /**
-     * Features/benefits section
+     * Ενότητα λειτουργιών / πλεονεκτημάτων.
      */
     features?: {
       title?: string | null;
       subtitle?: string | null;
       /**
-       * Feature items
+       * Λίστα λειτουργιών.
        */
       items?:
         | {
@@ -238,13 +192,13 @@ export interface Page {
         | null;
     };
     /**
-     * Process/steps section
+     * Ενότητα βημάτων διαδικασίας.
      */
     process?: {
       title?: string | null;
       subtitle?: string | null;
       /**
-       * Process steps
+       * Βήματα διαδικασίας.
        */
       steps?:
         | {
@@ -258,7 +212,7 @@ export interface Page {
         | null;
     };
     /**
-     * Contact form section
+     * Ενότητα φόρμας επικοινωνίας.
      */
     contact?: {
       title?: string | null;
@@ -273,8 +227,36 @@ export interface Page {
         submit?: string | null;
       };
     };
+  };
+  /**
+   * Κοινό header/footer για όλες τις σελίδες του tenant.
+   */
+  sharedLayout?: {
     /**
-     * Footer configuration
+     * Ρυθμίσεις κεφαλίδας.
+     */
+    header?: {
+      /**
+       * Κείμενο λογοτύπου.
+       */
+      logo_text?: string | null;
+      /**
+       * Μενού πλοήγησης.
+       */
+      menu?:
+        | {
+            label: string;
+            link: string;
+            id?: string | null;
+          }[]
+        | null;
+      cta?: {
+        label?: string | null;
+        link?: string | null;
+      };
+    };
+    /**
+     * Ρυθμίσεις υποσέλιδου.
      */
     footer?: {
       brand?: {
@@ -299,6 +281,27 @@ export interface Page {
       copyright?: string | null;
     };
   };
+  content?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  /**
+   * Search engine metadata for this page.
+   */
+  seo?: {
+    /**
+     * Overrides the default meta title (defaults to page title).
+     */
+    title?: string | null;
+    description?: string | null;
+    image?: (number | null) | Media;
+  };
+  publishedAt?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -310,21 +313,78 @@ export interface Tenant {
   id: number;
   name: string;
   /**
-   * Used for domain-based tenant handling
-   */
-  domain?: string | null;
-  /**
-   * Used for url paths, example: /tenant-slug/page-slug
+   * Used for URLs and identifying the tenant across the system
    */
   slug: string;
   /**
-   * If checked, logging in is not required to read. Useful for building public pages.
+   * Optional domain used to map requests to this tenant (e.g. www.example.com)
    */
-  allowPublicRead?: boolean | null;
+  domain?: string | null;
   /**
-   * Template determines the page structure and which pages are created automatically
+   * Primary locale for this tenant
    */
-  template: 'ftiaxesite';
+  defaultLocale?: ('el' | 'en') | null;
+  /**
+   * Optional JSON blob storing tenant specific theme settings (colours, fonts, etc.)
+   */
+  theme?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  /**
+   * Arbitrary tenant level configuration (header/footer references, integrations, etc.)
+   */
+  settings?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Page templates are unique per tenant and define the form schema for associated pages.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "page-types".
+ */
+export interface PageType {
+  id: number;
+  /**
+   * Tenant that owns this page type
+   */
+  tenant: number | Tenant;
+  name: string;
+  /**
+   * Unique per tenant (e.g. landing-ftiaxesite, about-ftiaxesite).
+   */
+  slug: string;
+  description?: string | null;
+  /**
+   * JSON schema describing the editable fields for this page type (e.g. sections, blocks, components).
+   */
+  fields?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  /**
+   * If true, new pages for this tenant default to this page type.
+   */
+  isDefault?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -414,6 +474,10 @@ export interface PayloadLockedDocument {
         value: number | Page;
       } | null)
     | ({
+        relationTo: 'page-types';
+        value: number | PageType;
+      } | null)
+    | ({
         relationTo: 'users';
         value: number | User;
       } | null)
@@ -479,39 +543,12 @@ export interface PagesSelect<T extends boolean = true> {
   tenant?: T;
   title?: T;
   slug?: T;
+  status?: T;
   pageType?: T;
-  description?: T;
-  content?: T;
-  featuredImage?: T;
-  meta?:
-    | T
-    | {
-        title?: T;
-        description?: T;
-        ogImage?: T;
-      };
-  publishedAt?: T;
+  summary?: T;
   sections?:
     | T
     | {
-        header?:
-          | T
-          | {
-              logo_text?: T;
-              menu?:
-                | T
-                | {
-                    label?: T;
-                    link?: T;
-                    id?: T;
-                  };
-              cta?:
-                | T
-                | {
-                    label?: T;
-                    link?: T;
-                  };
-            };
         hero?:
           | T
           | {
@@ -574,6 +611,28 @@ export interface PagesSelect<T extends boolean = true> {
                     submit?: T;
                   };
             };
+      };
+  sharedLayout?:
+    | T
+    | {
+        header?:
+          | T
+          | {
+              logo_text?: T;
+              menu?:
+                | T
+                | {
+                    label?: T;
+                    link?: T;
+                    id?: T;
+                  };
+              cta?:
+                | T
+                | {
+                    label?: T;
+                    link?: T;
+                  };
+            };
         footer?:
           | T
           | {
@@ -605,6 +664,29 @@ export interface PagesSelect<T extends boolean = true> {
               copyright?: T;
             };
       };
+  content?: T;
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  publishedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "page-types_select".
+ */
+export interface PageTypesSelect<T extends boolean = true> {
+  tenant?: T;
+  name?: T;
+  slug?: T;
+  description?: T;
+  fields?: T;
+  isDefault?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -646,10 +728,11 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface TenantsSelect<T extends boolean = true> {
   name?: T;
-  domain?: T;
   slug?: T;
-  allowPublicRead?: T;
-  template?: T;
+  domain?: T;
+  defaultLocale?: T;
+  theme?: T;
+  settings?: T;
   updatedAt?: T;
   createdAt?: T;
 }

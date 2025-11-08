@@ -1,0 +1,117 @@
+.page-content-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+
+  &__panel {
+    background: var(--theme-elevation-50);
+    border: 1px solid var(--theme-elevation-200);
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: var(--theme-elevation-shadow-sm);
+  }
+
+  &__pre {
+    margin-top: 1rem;
+    max-height: 300px;
+    overflow: auto;
+    padding: 1rem;
+    background: var(--theme-elevation-100);
+    border: 1px solid var(--theme-elevation-200);
+    border-radius: 6px;
+    font-family: var(--font-mono, monospace);
+    font-size: 0.85rem;
+  }
+
+  &__row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  &__label {
+    font-weight: 600;
+    color: var(--theme-elevation-800);
+  }
+
+  &__control {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__input,
+  &__textarea {
+    width: 100%;
+    border-radius: 6px;
+    border: 1px solid var(--theme-elevation-200);
+    padding: 0.5rem 0.75rem;
+    background: var(--theme-elevation-100);
+    color: inherit;
+  }
+
+  &__textarea {
+    resize: vertical;
+  }
+
+  &__divider {
+    margin: 1.5rem 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--theme-elevation-200);
+
+    h4 {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--theme-elevation-800);
+    }
+  }
+
+  &__subheading {
+    font-weight: 600;
+    color: var(--theme-elevation-700);
+    margin: 1rem 0 0.5rem;
+  }
+
+  &__array-item {
+    border: 1px solid var(--theme-elevation-200);
+    border-radius: 6px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background: var(--theme-elevation-100);
+  }
+
+  &__add,
+  &__remove {
+    margin-top: 0.5rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 9999px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.85rem;
+  }
+
+  &__add {
+    background: var(--theme-success-500);
+    color: #fff;
+  }
+
+  &__remove {
+    background: var(--theme-error-500);
+    color: #fff;
+  }
+
+  &__empty,
+  &__fallback {
+    background: var(--theme-elevation-50);
+    border: 1px dashed var(--theme-elevation-200);
+    padding: 1rem;
+    border-radius: 6px;
+    color: var(--theme-elevation-700);
+  }
+
+  &__error {
+    color: var(--theme-error-500);
+    margin-bottom: 0.5rem;
+  }
+}

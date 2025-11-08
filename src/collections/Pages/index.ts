@@ -1,26 +1,47 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig, FieldHook, FilterOptionsProps, Where } from 'payload'
 
+import { assignTenantOnCreate } from './hooks/assignTenantOnCreate'
+import { ensurePageTypeMatchesTenant } from './hooks/ensurePageTypeMatchesTenant'
 import { ensureUniqueSlug } from './hooks/ensureUniqueSlug'
-import { convertRichTextValue } from './hooks/convertRichTextValue'
-import { convertRichTextFields } from './hooks/convertRichTextFields'
-import { superAdminOrTenantAdminAccess } from '@/collections/Pages/access/superAdminOrTenantAdmin'
+import { slugifyInput } from './hooks/slugifyInput'
+import { superAdminOrTenantAdminAccess } from './access/superAdminOrTenantAdmin'
+import { tenantScopedReadAccess } from './access/tenantScopedReadAccess'
+import { extractID } from '@/utilities/extractID'
+import { getUserTenantIDs } from '@/utilities/getUserTenantIDs'
+import { isSuperAdmin } from '@/access/isSuperAdmin'
+
+const inferTenantFromData = ({ data }: FilterOptionsProps<any>): string | number | null => {
+  if (!data) {
+    return null
+  }
+
+  const tenantField = data.tenant ?? data?.tenant?.id
+
+  if (!tenantField) {
+    return null
+  }
+
+  return extractID(tenantField)
+}
 
 export const Pages: CollectionConfig = {
   slug: 'pages',
   access: {
     create: superAdminOrTenantAdminAccess,
     delete: superAdminOrTenantAdminAccess,
-    read: () => true,
+    read: tenantScopedReadAccess,
     update: superAdminOrTenantAdminAccess,
   },
   admin: {
     useAsTitle: 'title',
+    defaultColumns: ['title', 'slug', 'pageType', 'tenant'],
+    description:
+      'Pages are scoped per tenant. Each page is linked to a tenant-specific page type and stores its editable content as JSON data.',
   },
   hooks: {
-    afterRead: [
-      convertRichTextFields,
-    ],
+    beforeValidate: [assignTenantOnCreate, ensurePageTypeMatchesTenant],
   },
+  timestamps: true,
   fields: [
     {
       name: 'title',
@@ -30,170 +51,124 @@ export const Pages: CollectionConfig = {
     {
       name: 'slug',
       type: 'text',
-      defaultValue: 'home',
-      hooks: {
-        beforeValidate: [ensureUniqueSlug],
-      },
-      index: true,
       required: true,
+      unique: false,
+      index: true,
+      hooks: {
+        beforeValidate: [slugifyInput as FieldHook, ensureUniqueSlug],
+      },
+      admin: {
+        description: 'Unique per tenant. Used in the page URL. Example: home, about, header-footer-ftiaxesite.',
+      },
     },
     {
-      name: 'pageType',
+      name: 'status',
       type: 'select',
       options: [
-        { label: 'Standard Page', value: 'standard' },
-        { label: 'Landing Page', value: 'landing' },
-        { label: 'Blog Post', value: 'blog' },
-        { label: 'Custom', value: 'custom' },
+        { label: 'Draft', value: 'draft' },
+        { label: 'Published', value: 'published' },
       ],
-      defaultValue: 'standard',
+      defaultValue: 'draft',
       admin: {
-        description: 'Page type determines which fields are available',
         position: 'sidebar',
       },
     },
     {
-      name: 'description',
+      name: 'pageType',
+      type: 'relationship',
+      relationTo: 'page-types',
+      required: true,
+      admin: {
+        position: 'sidebar',
+        description: 'Page template that defines the editable fields and layout for this tenant.',
+      },
+      filterOptions: ({ data, user }: FilterOptionsProps<any>) => {
+        const tenantId = inferTenantFromData({ data, user })
+
+        if (tenantId) {
+          return {
+            tenant: {
+              equals: tenantId,
+            },
+          } as Where
+        }
+
+        if (user && isSuperAdmin(user as any)) {
+          return true
+        }
+
+        if (user) {
+          const tenantIDs = getUserTenantIDs(user as any)
+          if (tenantIDs.length === 1) {
+            return {
+              tenant: {
+                equals: tenantIDs[0],
+              },
+            } as Where
+          }
+
+          if (tenantIDs.length > 1) {
+            return {
+              tenant: {
+                in: tenantIDs,
+              },
+            } as Where
+          }
+        }
+
+        return true
+      },
+    },
+    {
+      name: 'summary',
       type: 'textarea',
       admin: {
-        description: 'Meta description for SEO',
+        description: 'Optional internal summary describing the purpose of this page.',
       },
     },
-    {
-      name: 'content',
-      type: 'richText',
-      admin: {
-        description: 'Main page content (used for standard pages and blog posts)',
-      },
-    },
-    {
-      name: 'featuredImage',
-      type: 'upload',
-      relationTo: 'media',
-      admin: {
-        description: 'Featured image for the page',
-      },
-    },
-    {
-      name: 'meta',
-      type: 'group',
-      fields: [
-        {
-          name: 'title',
-          type: 'text',
-          admin: {
-            description: 'Custom meta title (defaults to page title)',
-          },
-        },
-        {
-          name: 'description',
-          type: 'textarea',
-          admin: {
-            description: 'Custom meta description',
-          },
-        },
-        {
-          name: 'ogImage',
-          type: 'upload',
-          relationTo: 'media',
-          admin: {
-            description: 'Open Graph image for social sharing',
-          },
-        },
-      ],
-    },
-    {
-      name: 'publishedAt',
-      type: 'date',
-      admin: {
-        description: 'Publication date',
-        date: {
-          pickerAppearance: 'dayAndTime',
-        },
-      },
-    },
-    // ============================================
-    // Landing Page Sections (conditional - only for landing pages)
-    // ============================================
     {
       name: 'sections',
       type: 'group',
       admin: {
-        description: 'Page sections for landing pages (only shown when pageType is "landing")',
-        condition: (data) => data.pageType === 'landing',
+        description: 'Διαχειριστείτε τα περιεχόμενα των ενοτήτων της σελίδας.',
+        condition: (data) => {
+          const slug = data?.slug
+          if (typeof slug === 'string' && slug === 'ftiaxesite-homepage') {
+            return true
+          }
+          return false
+        },
+      },
+      hooks: {
+        beforeValidate: [
+          ({ value, siblingData }) => {
+            if (value && typeof value === 'object' && Object.keys(value).length > 0) {
+              return value
+            }
+            if (siblingData?.content && siblingData?.slug === 'header-footer-ftiaxesite') {
+              return siblingData.content
+            }
+            return value
+          },
+        ],
+        afterRead: [
+          ({ value, siblingData }) => {
+            if (value && typeof value === 'object' && Object.keys(value).length > 0) {
+              return value
+            }
+            if (siblingData?.content && siblingData?.slug === 'header-footer-ftiaxesite') {
+              return siblingData.content
+            }
+            return value
+          },
+        ],
       },
       fields: [
-        // Header Section
-        {
-          name: 'header',
-          type: 'group',
-          admin: {
-            description: 'Header/Navigation configuration',
-          },
-          fields: [
-            {
-              name: 'logo_text',
-              type: 'text',
-              defaultValue: 'ftiaxesite.gr',
-            },
-            {
-              name: 'menu',
-              type: 'array',
-              admin: {
-                description: 'Navigation menu items. Use anchor links like "features", "process", or "contact" for sections on the same page, or full URLs like "/about" for other pages.',
-              },
-              fields: [
-                {
-                  name: 'label',
-                  type: 'text',
-                  required: true,
-                  admin: {
-                    description: 'Menu item label (e.g., "Λειτουργίες", "Διαδικασία")',
-                  },
-                },
-                {
-                  name: 'link',
-                  type: 'text',
-                  required: true,
-                  admin: {
-                    description: 'Anchor link (e.g., "features", "process", "contact") or page URL (e.g., "/about"). Anchor links scroll to sections on the same page.',
-                    placeholder: 'features',
-                  },
-                },
-              ],
-            },
-            {
-              name: 'cta',
-              type: 'group',
-              admin: {
-                description: 'Call-to-action button in header',
-              },
-              fields: [
-                {
-                  name: 'label',
-                  type: 'text',
-                  admin: {
-                    description: 'Button label (e.g., "Φτιάξε το site σου")',
-                  },
-                },
-                {
-                  name: 'link',
-                  type: 'text',
-                  admin: {
-                    description: 'Anchor link (e.g., "contact") or page URL. Anchor links scroll to sections on the same page.',
-                    placeholder: 'contact',
-                  },
-                },
-              ],
-            },
-          ],
-        },
-        // Hero Section
         {
           name: 'hero',
           type: 'group',
           admin: {
-            description: 'Hero section at the top of the page',
+            description: 'Hero section στην αρχή της σελίδας.',
           },
           fields: [
             {
@@ -203,34 +178,31 @@ export const Pages: CollectionConfig = {
             },
             {
               name: 'subheadline',
-              type: 'richText',
+              type: 'textarea',
               admin: {
-                description: 'Hero subtitle with rich text formatting (bold, italic, links)',
-              },
-              hooks: {
-                beforeValidate: [
-                  convertRichTextValue,
-                ],
+                description: 'Υπότιτλος hero με πολλαπλές γραμμές.',
               },
             },
             {
               name: 'cta',
               type: 'text',
-              defaultValue: 'Ξεκίνα τώρα',
+              admin: {
+                placeholder: 'Ξεκίνα τώρα',
+              },
             },
             {
               name: 'image',
               type: 'upload',
               relationTo: 'media',
               admin: {
-                description: 'Hero image/illustration',
+                description: 'Εικόνα hero.',
               },
             },
             {
               name: 'stats',
               type: 'array',
               admin: {
-                description: 'Statistics displayed below CTA',
+                description: 'Στατιστικά κάτω από το CTA.',
               },
               fields: [
                 {
@@ -247,12 +219,11 @@ export const Pages: CollectionConfig = {
             },
           ],
         },
-        // Features Section
         {
           name: 'features',
           type: 'group',
           admin: {
-            description: 'Features/benefits section',
+            description: 'Ενότητα λειτουργιών / πλεονεκτημάτων.',
           },
           fields: [
             {
@@ -261,21 +232,13 @@ export const Pages: CollectionConfig = {
             },
             {
               name: 'subtitle',
-              type: 'richText',
-              admin: {
-                description: 'Section subtitle with rich text formatting',
-              },
-              hooks: {
-                beforeValidate: [
-                  convertRichTextValue,
-                ],
-              },
+              type: 'textarea',
             },
             {
               name: 'items',
               type: 'array',
               admin: {
-                description: 'Feature items',
+                description: 'Λίστα λειτουργιών.',
               },
               fields: [
                 {
@@ -289,7 +252,7 @@ export const Pages: CollectionConfig = {
                     { label: 'Smartphone', value: 'smartphone' },
                     { label: 'Zap', value: 'zap' },
                   ],
-                  defaultValue: 'zap',
+                  defaultValue: 'clock',
                 },
                 {
                   name: 'title',
@@ -298,27 +261,18 @@ export const Pages: CollectionConfig = {
                 },
                 {
                   name: 'description',
-                  type: 'richText',
+                  type: 'textarea',
                   required: true,
-                  admin: {
-                    description: 'Feature description with rich text formatting',
-                  },
-                  hooks: {
-                    beforeValidate: [
-                      convertRichTextValue,
-                    ],
-                  },
                 },
               ],
             },
           ],
         },
-        // Process Section
         {
           name: 'process',
           type: 'group',
           admin: {
-            description: 'Process/steps section',
+            description: 'Ενότητα βημάτων διαδικασίας.',
           },
           fields: [
             {
@@ -327,27 +281,21 @@ export const Pages: CollectionConfig = {
             },
             {
               name: 'subtitle',
-              type: 'richText',
-              admin: {
-                description: 'Section subtitle with rich text formatting',
-              },
-              hooks: {
-                beforeValidate: [
-                  convertRichTextValue,
-                ],
-              },
+              type: 'textarea',
             },
             {
               name: 'steps',
               type: 'array',
               admin: {
-                description: 'Process steps',
+                description: 'Βήματα διαδικασίας.',
               },
               fields: [
                 {
                   name: 'number',
                   type: 'text',
-                  defaultValue: '01',
+                  admin: {
+                    placeholder: '01',
+                  },
                 },
                 {
                   name: 'icon',
@@ -366,11 +314,8 @@ export const Pages: CollectionConfig = {
                 },
                 {
                   name: 'description',
-                  type: 'richText',
+                  type: 'textarea',
                   required: true,
-                  admin: {
-                    description: 'Step description with rich text formatting',
-                  },
                 },
                 {
                   name: 'color',
@@ -385,12 +330,11 @@ export const Pages: CollectionConfig = {
             },
           ],
         },
-        // Contact Section
         {
           name: 'contact',
           type: 'group',
           admin: {
-            description: 'Contact form section',
+            description: 'Ενότητα φόρμας επικοινωνίας.',
           },
           fields: [
             {
@@ -399,15 +343,7 @@ export const Pages: CollectionConfig = {
             },
             {
               name: 'subtitle',
-              type: 'richText',
-              admin: {
-                description: 'Section subtitle with rich text formatting',
-              },
-              hooks: {
-                beforeValidate: [
-                  convertRichTextValue,
-                ],
-              },
+              type: 'textarea',
             },
             {
               name: 'form',
@@ -452,12 +388,101 @@ export const Pages: CollectionConfig = {
             },
           ],
         },
-        // Footer Section
+      ],
+    },
+    {
+      name: 'sharedLayout',
+      type: 'group',
+      admin: {
+        description: 'Κοινό header/footer για όλες τις σελίδες του tenant.',
+        condition: (data) => {
+          const slug = data?.slug
+          if (typeof slug === 'string' && slug === 'header-footer-ftiaxesite') {
+            return true
+          }
+          return false
+        },
+      },
+      hooks: {
+        beforeValidate: [
+          ({ value, siblingData }) => {
+            if (value && typeof value === 'object' && Object.keys(value).length > 0) {
+              return value
+            }
+            if (siblingData?.content) {
+              return siblingData.content
+            }
+            return value
+          },
+        ],
+        afterRead: [
+          ({ value, siblingData }) => {
+            if (value && typeof value === 'object' && Object.keys(value).length > 0) {
+              return value
+            }
+            if (siblingData?.content) {
+              return siblingData.content
+            }
+            return value
+          },
+        ],
+      },
+      fields: [
+        {
+          name: 'header',
+          type: 'group',
+          admin: {
+            description: 'Ρυθμίσεις κεφαλίδας.',
+          },
+          fields: [
+            {
+              name: 'logo_text',
+              type: 'text',
+              admin: {
+                description: 'Κείμενο λογοτύπου.',
+              },
+              defaultValue: 'ftiaxesite.gr',
+            },
+            {
+              name: 'menu',
+              type: 'array',
+              admin: {
+                description: 'Μενού πλοήγησης.',
+              },
+              fields: [
+                {
+                  name: 'label',
+                  type: 'text',
+                  required: true,
+                },
+                {
+                  name: 'link',
+                  type: 'text',
+                  required: true,
+                },
+              ],
+            },
+            {
+              name: 'cta',
+              type: 'group',
+              fields: [
+                {
+                  name: 'label',
+                  type: 'text',
+                },
+                {
+                  name: 'link',
+                  type: 'text',
+                },
+              ],
+            },
+          ],
+        },
         {
           name: 'footer',
           type: 'group',
           admin: {
-            description: 'Footer configuration',
+            description: 'Ρυθμίσεις υποσέλιδου.',
           },
           fields: [
             {
@@ -481,7 +506,6 @@ export const Pages: CollectionConfig = {
                 {
                   name: 'title',
                   type: 'text',
-                  defaultValue: 'Επικοινωνία',
                 },
                 {
                   name: 'email',
@@ -500,7 +524,6 @@ export const Pages: CollectionConfig = {
                 {
                   name: 'title',
                   type: 'text',
-                  defaultValue: 'Χρήσιμα',
                 },
                 {
                   name: 'items',
@@ -527,6 +550,56 @@ export const Pages: CollectionConfig = {
           ],
         },
       ],
+    },
+    {
+      name: 'content',
+      type: 'json',
+      admin: {
+        hidden: true,
+        readOnly: true,
+      },
+      hooks: {
+        beforeValidate: [
+          ({ siblingData }) =>
+            siblingData?.sections ??
+            siblingData?.content ?? {},
+        ],
+      },
+    },
+    {
+      name: 'seo',
+      type: 'group',
+      admin: {
+        description: 'Search engine metadata for this page.',
+      },
+      fields: [
+        {
+          name: 'title',
+          type: 'text',
+          admin: {
+            description: 'Overrides the default meta title (defaults to page title).',
+          },
+        },
+        {
+          name: 'description',
+          type: 'textarea',
+        },
+        {
+          name: 'image',
+          type: 'upload',
+          relationTo: 'media',
+        },
+      ],
+    },
+    {
+      name: 'publishedAt',
+      type: 'date',
+      admin: {
+        position: 'sidebar',
+        date: {
+          pickerAppearance: 'dayAndTime',
+        },
+      },
     },
   ],
 }

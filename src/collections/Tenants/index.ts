@@ -2,7 +2,6 @@ import type { CollectionConfig } from 'payload'
 
 import { isSuperAdminAccess } from '@/access/isSuperAdmin'
 import { updateAndDeleteAccess } from './access/updateAndDelete'
-import { populateTenantPages } from '@/utilities/populateTenantPages'
 
 export const Tenants: CollectionConfig = {
   slug: 'tenants',
@@ -14,33 +13,7 @@ export const Tenants: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'name',
-  },
-  hooks: {
-    afterChange: [
-      async ({ doc, operation, req }) => {
-        // Only populate pages when a new tenant is created (not on updates)
-        if (operation === 'create' && doc.id) {
-          try {
-            const templateName = doc.template || 'ftiaxesite'
-            await populateTenantPages(
-              req.payload,
-              doc.id,
-              templateName,
-              doc.name,
-              doc.slug,
-            )
-            req.payload.logger.info(
-              `✅ Pages populated for tenant: ${doc.name} (ID: ${doc.id}, Template: ${templateName})`,
-            )
-          } catch (error) {
-            req.payload.logger.error(
-              `❌ Failed to populate pages for tenant ${doc.name}: ${error instanceof Error ? error.message : String(error)}`,
-            )
-            // Don't throw - allow tenant creation to succeed even if page population fails
-          }
-        }
-      },
-    ],
+    defaultColumns: ['name', 'slug', 'domain'],
   },
   fields: [
     {
@@ -49,52 +22,46 @@ export const Tenants: CollectionConfig = {
       required: true,
     },
     {
+      name: 'slug',
+      type: 'text',
+      required: true,
+      index: true,
+      unique: true,
+      admin: {
+        description: 'Used for URLs and identifying the tenant across the system',
+      },
+    },
+    {
       name: 'domain',
       type: 'text',
       admin: {
-        description: 'Used for domain-based tenant handling',
+        description: 'Optional domain used to map requests to this tenant (e.g. www.example.com)',
       },
     },
     {
-      name: 'slug',
-      type: 'text',
-      admin: {
-        description: 'Used for url paths, example: /tenant-slug/page-slug',
-      },
-      index: true,
-      required: true,
-    },
-    {
-      name: 'allowPublicRead',
-      type: 'checkbox',
-      admin: {
-        description:
-          'If checked, logging in is not required to read. Useful for building public pages.',
-        position: 'sidebar',
-      },
-      defaultValue: false,
-      index: true,
-    },
-    {
-      name: 'template',
+      name: 'defaultLocale',
       type: 'select',
-      required: true,
-      defaultValue: 'ftiaxesite',
+      defaultValue: 'el',
       options: [
-        {
-          label: 'ftiaxesite (Landing Page Template)',
-          value: 'ftiaxesite',
-        },
-        // Add more templates as you convert V0.app templates
-        // {
-        //   label: 'V0 Template 1',
-        //   value: 'v0-template-1',
-        // },
+        { label: 'Greek', value: 'el' },
+        { label: 'English', value: 'en' },
       ],
       admin: {
-        description:
-          'Template determines the page structure and which pages are created automatically',
-        position: 'sidebar',
+        description: 'Primary locale for this tenant',
+      },
+    },
+    {
+      name: 'theme',
+      type: 'json',
+      admin: {
+        description: 'Optional JSON blob storing tenant specific theme settings (colours, fonts, etc.)',
+      },
+    },
+    {
+      name: 'settings',
+      type: 'json',
+      admin: {
+        description: 'Arbitrary tenant level configuration (header/footer references, integrations, etc.)',
       },
     },
   ],

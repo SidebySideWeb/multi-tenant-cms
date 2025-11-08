@@ -1,155 +1,137 @@
 /**
- * SEED FILE - COMMENTED OUT FOR PRODUCTION USE
- * 
- * This file was used for initial database seeding during development.
- * It creates demo tenants, users, and pages for testing purposes.
- * 
- * DISABLED: This seed file is disabled by default (SEED_DB=false in .env).
- * 
- * To use this seed file:
- * 1. Set SEED_DB=true in your .env file
- * 2. Run: npm run seed:fresh (WARNING: This will drop your database!)
- * 
- * For production, create tenants and users manually through the Payload admin panel.
+ * SEED FILE - DISABLED BY DEFAULT
+ *
+ * This file is left in the repo for documentation purposes. The actual seeding
+ * logic has been commented out to avoid accidental execution in production.
  */
 
-import { Config } from 'payload'
+import type { Config } from 'payload'
 
-// export const seed: NonNullable<Config['onInit']> = async (payload): Promise<void> => {
-//   const tenant1 = await payload.create({
-//     collection: 'tenants',
-//     data: {
-//       name: 'Tenant 1',
-//       slug: 'gold',
-//       domain: 'gold.localhost',
-//     },
-//   })
+// import { convertStringToLexical } from './collections/Pages/hooks/convertRichTextValue'
 
-//   const tenant2 = await payload.create({
-//     collection: 'tenants',
-//     data: {
-//       name: 'Tenant 2',
-//       slug: 'silver',
-//       domain: 'silver.localhost',
-//     },
-//   })
-
-//   const tenant3 = await payload.create({
-//     collection: 'tenants',
-//     data: {
-//       name: 'Tenant 3',
-//       slug: 'bronze',
-//       domain: 'bronze.localhost',
-//     },
-//   })
-
-//   await payload.create({
+// const ensureSuperAdmin = async (
+//   payload: Parameters<NonNullable<Config['onInit']>>[0],
+//   email: string,
+//   password: string,
+// ) => {
+//   const existing = await payload.find({
 //     collection: 'users',
-//     data: {
-//       email: 'demo@payloadcms.com',
-//       password: 'demo',
-//       roles: ['super-admin'],
+//     where: {
+//       email: {
+//         equals: email,
+//       },
 //     },
+//     limit: 1,
+//     depth: 0,
 //   })
 
-//   await payload.create({
-//     collection: 'users',
-//     data: {
-//       email: 'tenant1@payloadcms.com',
-//       password: 'demo',
-//       tenants: [
-//         {
-//           roles: ['tenant-admin'],
-//           tenant: tenant1.id,
-//         },
-//       ],
-//       username: 'tenant1',
-//     },
-//   })
-
-//   await payload.create({
-//     collection: 'users',
-//     data: {
-//       email: 'tenant2@payloadcms.com',
-//       password: 'demo',
-//       tenants: [
-//         {
-//           roles: ['tenant-admin'],
-//           tenant: tenant2.id,
-//         },
-//       ],
-//       username: 'tenant2',
-//     },
-//   })
-
-//   await payload.create({
-//     collection: 'users',
-//     data: {
-//       email: 'tenant3@payloadcms.com',
-//       password: 'demo',
-//       tenants: [
-//         {
-//           roles: ['tenant-admin'],
-//           tenant: tenant3.id,
-//         },
-//       ],
-//       username: 'tenant3',
-//     },
-//   })
-
-//   await payload.create({
-//     collection: 'users',
-//     data: {
-//       email: 'multi-admin@payloadcms.com',
-//       password: 'demo',
-//       tenants: [
-//         {
-//           roles: ['tenant-admin'],
-//           tenant: tenant1.id,
-//         },
-//         {
-//           roles: ['tenant-admin'],
-//           tenant: tenant2.id,
-//         },
-//         {
-//           roles: ['tenant-admin'],
-//           tenant: tenant3.id,
-//         },
-//       ],
-//       username: 'multi-admin',
-//     },
-//   })
-
-//   await payload.create({
-//     collection: 'pages',
-//     data: {
-//       slug: 'home',
-//       tenant: tenant1.id,
-//       title: 'Page for Tenant 1',
-//     },
-//   })
-
-//   await payload.create({
-//     collection: 'pages',
-//     data: {
-//       slug: 'home',
-//       tenant: tenant2.id,
-//       title: 'Page for Tenant 2',
-//     },
-//   })
-
-//   await payload.create({
-//     collection: 'pages',
-//     data: {
-//       slug: 'home',
-//       tenant: tenant3.id,
-//       title: 'Page for Tenant 3',
-//     },
-//   })
+//   if (existing.docs.length > 0) {
+//    await (payload as any).update({
+//      collection: 'users',
+//      id: existing.docs[0].id,
+//      data: {
+//        email,
+//        password,
+//        roles: ['super-admin'],
+//      },
+//    })
+//   } else {
+//     await (payload as any).create({
+//       collection: 'users',
+//       data: {
+//         email,
+//         password,
+//         roles: ['super-admin'],
+//       },
+//     })
+//   }
 // }
 
-// Export an empty function to prevent TypeScript errors
-export const seed: NonNullable<Config['onInit']> = async (): Promise<void> => {
-  // Seed function is disabled - see comments above
+// export const seed: NonNullable<Config['onInit']> = async (payload) => {
+//   const tenantSlug = 'ftiaxesite'
+//
+//   const existingTenant = await payload.find({
+//     collection: 'tenants',
+//     where: {
+//       slug: {
+//         equals: tenantSlug,
+//       },
+//     },
+//     limit: 1,
+//     depth: 0,
+//   })
+
+//   let tenantId: number | string
+//
+//   if (existingTenant.docs.length > 0) {
+//     tenantId = existingTenant.docs[0].id
+//   } else {
+//     const tenant = await (payload as any).create({
+//       collection: 'tenants',
+//       data: {
+//         name: 'ftiaxesite',
+//         slug: tenantSlug,
+//         domain: 'ftiaxesite.gr',
+//       },
+//     })
+//
+//     tenantId = tenant.id
+//   }
+//
+//   const existingPage = await payload.find({
+//     collection: 'pages',
+//     where: {
+//       and: [
+//         {
+//           slug: {
+//             equals: 'ftiaxesite-homepage',
+//           },
+//         },
+//         {
+//           tenant: {
+//             equals: tenantId,
+//           },
+//         },
+//       ],
+//     },
+//     limit: 1,
+//     depth: 0,
+//   })
+//
+//   const landingSections = { /* ...omitted for brevity... */ }
+//
+//   const pagePayload = {
+//     slug: 'ftiaxesite-homepage',
+//     tenant: tenantId,
+//     title: 'Ftiaxesite-homepage',
+//     pageType: 'landing',
+//     description: 'AI-powered websites σε 48 ώρες',
+//     sections: landingSections,
+//     meta: {
+//       title: 'ftiaxesite.gr - AI Websites σε 48 Ώρες',
+//       description:
+//         'Φτιάξε το site σου σε 48 ώρες με τη δύναμη της Τεχνητής Νοημοσύνης. Οικονομικά, γρήγορα και επαγγελματικά websites από 250€.',
+//     },
+//   }
+//
+//   if (existingPage.docs.length > 0) {
+//     await (payload as any).update({
+//       collection: 'pages',
+//       id: existingPage.docs[0].id,
+//       data: pagePayload,
+//     })
+//   } else {
+//     await (payload as any).create({
+//       collection: 'pages',
+//       data: pagePayload,
+//     })
+//   }
+//
+//   await ensureSuperAdmin(payload, 'demo@payloadcms.com', 'demo')
+//   await ensureSuperAdmin(payload, 'dgeronikolos@sidebysideweb.gr', 'DimiGero1984!!!')
+// }
+
+export const seed: NonNullable<Config['onInit']> = async () => {
+  // Seed disabled
   return Promise.resolve()
 }

@@ -6,10 +6,15 @@ import { getUserTenantIDs } from '../../../utilities/getUserTenantIDs'
 import { extractID } from '@/utilities/extractID'
 
 export const ensureUniqueSlug: FieldHook = async ({ data, originalDoc, req, value }) => {
-  // if value is unchanged, skip validation
-  if (originalDoc.slug === value) {
+  if (typeof value !== 'string' || value.length === 0) {
     return value
   }
+
+  if (originalDoc?.slug === value) {
+    return value
+  }
+
+  const tenantIDToMatch = extractID(data?.tenant) ?? extractID(originalDoc?.tenant)
 
   const constraints: Where[] = [
     {
@@ -18,10 +23,6 @@ export const ensureUniqueSlug: FieldHook = async ({ data, originalDoc, req, valu
       },
     },
   ]
-
-  const incomingTenantID = extractID(data?.tenant)
-  const currentTenantID = extractID(originalDoc?.tenant)
-  const tenantIDToMatch = incomingTenantID || currentTenantID
 
   if (tenantIDToMatch) {
     constraints.push({
@@ -36,22 +37,28 @@ export const ensureUniqueSlug: FieldHook = async ({ data, originalDoc, req, valu
     where: {
       and: constraints,
     },
+    depth: 0,
+    limit: 1,
   })
 
   if (findDuplicatePages.docs.length > 0 && req.user) {
     const tenantIDs = getUserTenantIDs(req.user)
-    // if the user is an admin or has access to more than 1 tenant
-    // provide a more specific error message
+
     if (req.user.roles?.includes('super-admin') || tenantIDs.length > 1) {
-      const attemptedTenantChange = await req.payload.findByID({
-        id: tenantIDToMatch,
-        collection: 'tenants',
-      })
+      const attemptedTenantChange = tenantIDToMatch
+        ? await req.payload.findByID({
+            id: tenantIDToMatch,
+            collection: 'tenants',
+            depth: 0,
+          })
+        : undefined
 
       throw new ValidationError({
         errors: [
           {
-            message: `The "${attemptedTenantChange.name}" tenant already has a page with the slug "${value}". Slugs must be unique per tenant.`,
+            message: attemptedTenantChange
+              ? `The tenant "${attemptedTenantChange.name}" already has a page with the slug "${value}". Slugs must be unique per tenant.`
+              : `The slug "${value}" is already in use. Slugs must be unique per tenant.`,
             path: 'slug',
           },
         ],
@@ -61,7 +68,7 @@ export const ensureUniqueSlug: FieldHook = async ({ data, originalDoc, req, valu
     throw new ValidationError({
       errors: [
         {
-          message: `A page with the slug ${value} already exists. Slug must be unique per tenant.`,
+          message: `A page with the slug "${value}" already exists for this tenant.`,
           path: 'slug',
         },
       ],
