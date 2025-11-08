@@ -127,6 +127,30 @@ export const Pages: CollectionConfig = {
       },
     },
     {
+      name: 'headerFooterPageSlug',
+      type: 'text',
+      defaultValue: 'header-footer-ftiaxesite',
+      admin: {
+        description: 'Slug of the shared header/footer page used by this homepage.',
+        condition: (data) => typeof data?.slug === 'string' && data.slug === 'ftiaxesite-homepage',
+        placeholder: 'header-footer-ftiaxesite',
+      },
+      hooks: {
+        beforeValidate: [
+          ({ value, siblingData }) =>
+            value ??
+            siblingData?.content?.shared?.headerFooterPageSlug ??
+            'header-footer-ftiaxesite',
+        ],
+        afterRead: [
+          ({ value, siblingData }) =>
+            value ??
+            siblingData?.content?.shared?.headerFooterPageSlug ??
+            'header-footer-ftiaxesite',
+        ],
+      },
+    },
+    {
       name: 'sections',
       type: 'group',
       admin: {
@@ -145,8 +169,8 @@ export const Pages: CollectionConfig = {
             if (value && typeof value === 'object' && Object.keys(value).length > 0) {
               return value
             }
-            if (siblingData?.content && siblingData?.slug === 'header-footer-ftiaxesite') {
-              return siblingData.content
+            if (siblingData?.content?.sections) {
+              return siblingData.content.sections
             }
             return value
           },
@@ -156,8 +180,8 @@ export const Pages: CollectionConfig = {
             if (value && typeof value === 'object' && Object.keys(value).length > 0) {
               return value
             }
-            if (siblingData?.content && siblingData?.slug === 'header-footer-ftiaxesite') {
-              return siblingData.content
+            if (siblingData?.content?.sections) {
+              return siblingData.content.sections
             }
             return value
           },
@@ -409,7 +433,7 @@ export const Pages: CollectionConfig = {
             if (value && typeof value === 'object' && Object.keys(value).length > 0) {
               return value
             }
-            if (siblingData?.content) {
+            if (siblingData?.slug === 'header-footer-ftiaxesite' && siblingData?.content) {
               return siblingData.content
             }
             return value
@@ -420,7 +444,7 @@ export const Pages: CollectionConfig = {
             if (value && typeof value === 'object' && Object.keys(value).length > 0) {
               return value
             }
-            if (siblingData?.content) {
+            if (siblingData?.slug === 'header-footer-ftiaxesite' && siblingData?.content) {
               return siblingData.content
             }
             return value
@@ -560,9 +584,34 @@ export const Pages: CollectionConfig = {
       },
       hooks: {
         beforeValidate: [
-          ({ siblingData }) =>
-            siblingData?.sections ??
-            siblingData?.content ?? {},
+          ({ siblingData }) => {
+            const slug = siblingData?.slug
+
+            if (slug === 'header-footer-ftiaxesite') {
+              return siblingData?.sharedLayout ?? siblingData?.content ?? {}
+            }
+
+            const sections = siblingData?.sections ?? siblingData?.content?.sections ?? {}
+            const headerFooterSlug =
+              siblingData?.headerFooterPageSlug ??
+              siblingData?.content?.shared?.headerFooterPageSlug ??
+              'header-footer-ftiaxesite'
+
+            const sharedLayout = siblingData?.sharedLayout ?? siblingData?.content?.shared?.layout ?? {}
+
+            const result: Record<string, any> = {
+              sections,
+              shared: {
+                headerFooterPageSlug: headerFooterSlug,
+              },
+            }
+
+            if (Object.keys(sharedLayout).length > 0) {
+              result.shared.layout = sharedLayout
+            }
+
+            return result
+          },
         ],
       },
     },

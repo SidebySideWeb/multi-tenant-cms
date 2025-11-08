@@ -186,6 +186,8 @@ export async function populateTenantHomepage(
     throw new Error('Unable to locate homepage page type for tenant')
   }
 
+  const headerFooterSlug = 'header-footer-ftiaxesite'
+
   const sectionsPayload = {
     hero: {
       headline: data.hero.headline,
@@ -198,6 +200,13 @@ export async function populateTenantHomepage(
     contact: data.contact,
   }
 
+  const contentPayload = {
+    sections: sectionsPayload,
+    shared: {
+      headerFooterPageSlug: headerFooterSlug,
+    },
+  }
+
   // If homepage already exists, update it instead of creating new
   if (existingHomepage.docs.length > 0) {
     await payload.update({
@@ -208,7 +217,8 @@ export async function populateTenantHomepage(
         summary: data.hero.subheadline,
         pageType: pageTypeId,
         sections: sectionsPayload,
-        content: sectionsPayload,
+        headerFooterPageSlug: headerFooterSlug,
+        content: contentPayload,
       },
     })
   } else {
@@ -223,7 +233,8 @@ export async function populateTenantHomepage(
         pageType: pageTypeId,
         status: 'published',
         sections: sectionsPayload,
-        content: sectionsPayload,
+        headerFooterPageSlug: headerFooterSlug,
+        content: contentPayload,
       },
     })
   }
