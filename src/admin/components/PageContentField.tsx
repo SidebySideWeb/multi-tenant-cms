@@ -728,6 +728,20 @@ const PageContentFieldInner: React.FC<PageContentFieldInnerProps> = ({ fieldStat
   )
 }
 
+const PageContentFieldWithContext: React.FC<JSONFieldClientProps> = (props) => {
+  const fieldState = useField<any>({ path: props.path })
+  const pageTypeFieldState = useField<RelationshipValue>({ path: 'pageType' })
+
+  const configContext = useConfigSafe()
+
+  if (!configContext?.config) {
+    console.warn('[PageContentField] Config context unavailable, rendering JSON fallback.')
+    return <JSONFallbackEditor fieldState={fieldState} />
+  }
+
+  return <PageContentFieldInner {...props} fieldState={fieldState} pageTypeFieldState={pageTypeFieldState} />
+}
+
 const PageContentFieldBase: React.FC<JSONFieldClientProps> = (props) => {
   const [isClient, setIsClient] = useState(false)
 
@@ -738,19 +752,6 @@ const PageContentFieldBase: React.FC<JSONFieldClientProps> = (props) => {
   if (!isClient) return null
 
   return <PageContentFieldWithContext {...props} />
-}
-
-const PageContentFieldWithContext: React.FC<JSONFieldClientProps> = (props) => {
-  const configContext = useConfigSafe()
-
-  if (!configContext?.config) {
-    return <JSONFallbackEditor />
-  }
-
-  const fieldState = useField<any>({ path: props.path })
-  const pageTypeFieldState = useField<RelationshipValue>({ path: 'pageType' })
-
-  return <PageContentFieldInner {...props} fieldState={fieldState} pageTypeFieldState={pageTypeFieldState} />
 }
 
 function useConfigSafe() {
