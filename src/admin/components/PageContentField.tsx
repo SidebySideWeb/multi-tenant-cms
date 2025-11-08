@@ -592,7 +592,7 @@ const DynamicPageContentEditor: React.FC<{
   )
 }
 
-const JSONFallbackEditor: React.FC<PayloadJSONFieldProps> = ({ value, onChange }) => {
+const JSONFallbackEditor: React.FC<PayloadJSONFieldProps> = ({ value, onChange, path }) => {
   const configContext = useConfigSafe()
   const readonly = !configContext
   const [stringValue, setStringValue] = useState(() => JSON.stringify(value ?? {}, null, 2))
@@ -681,7 +681,7 @@ const PageContentFieldInner: React.FC<PageContentFieldInnerProps> = ({ fieldStat
     return (
       <div className={`${fieldBaseClass} page-content-editor__empty`}>
         <p>Επιλέξτε ένα Page Type για να εμφανιστούν τα πεδία περιεχομένου.</p>
-        <JSONFallbackEditor value={value} onChange={setValue} />
+        <JSONFallbackEditor path={fieldState.path} value={value} onChange={setValue} />
       </div>
     )
   }
@@ -698,13 +698,13 @@ const PageContentFieldInner: React.FC<PageContentFieldInnerProps> = ({ fieldStat
     return (
       <div className={`${fieldBaseClass} page-content-editor__empty`}>
         <p>Αποτυχία φόρτωσης page type: {loadError}</p>
-        <JSONFallbackEditor value={value} onChange={setValue} />
+        <JSONFallbackEditor path={fieldState.path} value={value} onChange={setValue} />
       </div>
     )
   }
 
   if (!pageType) {
-    return <JSONFallbackEditor value={value} onChange={setValue} />
+    return <JSONFallbackEditor path={fieldState.path} value={value} onChange={setValue} />
   }
 
   const schema = normalizePageTypeSchema(pageType.fields)
@@ -714,7 +714,7 @@ const PageContentFieldInner: React.FC<PageContentFieldInnerProps> = ({ fieldStat
       <div className={`${fieldBaseClass} page-content-editor__fallback`}>
         {showError && errorMessage && <p className="page-content-editor__error">{errorMessage}</p>}
         <p>Δεν υπάρχει δυναμικός επεξεργαστής για το συγκεκριμένο page type. Χρησιμοποιήστε την JSON προβολή.</p>
-        <JSONFallbackEditor value={value} onChange={setValue} />
+        <JSONFallbackEditor path={fieldState.path} value={value} onChange={setValue} />
       </div>
     )
   }
@@ -738,7 +738,7 @@ const PageContentFieldWithContext: React.FC<PayloadJSONFieldProps> = (props) => 
 
   if (!configContext?.config) {
     console.warn('[PageContentField] Config context unavailable, rendering JSON fallback.')
-    return <JSONFallbackEditor value={fieldState.value} onChange={fieldState.setValue} />
+    return <JSONFallbackEditor path={fieldState.path} value={fieldState.value} onChange={fieldState.setValue} />
   }
 
   return <PageContentFieldInner {...props} fieldState={fieldState} pageTypeFieldState={pageTypeFieldState} />
