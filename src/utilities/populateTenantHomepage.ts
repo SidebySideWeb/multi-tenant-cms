@@ -197,7 +197,7 @@ export async function populateTenantHomepage(
 
   const headerFooterSlug = 'header-footer-ftiaxesite'
 
-  const sectionsPayload = {
+  const sectionsPayload: Record<string, any> = {
     hero: {
       headline: data.hero.headline,
       subheadline: toLexicalState(data.hero.subheadline),
@@ -209,7 +209,7 @@ export async function populateTenantHomepage(
     contact: data.contact,
   }
 
-  const contentPayload = {
+  const contentPayload: Record<string, any> = {
     sections: sectionsPayload,
     shared: {
       headerFooterPageSlug: headerFooterSlug,
