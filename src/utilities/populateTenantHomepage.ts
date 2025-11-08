@@ -197,7 +197,7 @@ export async function populateTenantHomepage(
 
   const headerFooterSlug = 'header-footer-ftiaxesite'
 
-  const sectionsPayload: Record<string, any> = {
+  const sectionsPayload = {
     hero: {
       headline: data.hero.headline,
       subheadline: toLexicalState(data.hero.subheadline),
@@ -209,7 +209,7 @@ export async function populateTenantHomepage(
     contact: data.contact,
   }
 
-  const contentPayload: Record<string, any> = {
+  const contentPayload = {
     sections: sectionsPayload,
     shared: {
       headerFooterPageSlug: headerFooterSlug,
@@ -225,8 +225,8 @@ export async function populateTenantHomepage(
         title: data.hero.headline,
         summary: data.hero.subheadline,
         pageType: pageTypeId,
-        sections: sectionsPayload,
-        content: contentPayload,
+        sections: sectionsPayload as any,
+        content: contentPayload as any,
       },
     })
   } else {
@@ -240,8 +240,8 @@ export async function populateTenantHomepage(
         summary: data.hero.subheadline,
         pageType: pageTypeId,
         status: 'published',
-        sections: sectionsPayload,
-        content: contentPayload,
+        sections: sectionsPayload as any,
+        content: contentPayload as any,
       },
     })
   }
