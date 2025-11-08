@@ -742,23 +742,13 @@ const PageContentFieldBase: React.FC<JSONFieldClientProps> = (props) => {
 
 const PageContentFieldWithContext: React.FC<JSONFieldClientProps> = (props) => {
   const configContext = useConfigSafe()
-  let fieldState: ReturnType<typeof useField<any>> | null = null
-  let pageTypeFieldState: ReturnType<typeof useField<RelationshipValue>> | null = null
-  let hookError: unknown = null
 
-  try {
-    fieldState = useField<any>({ path: props.path })
-    pageTypeFieldState = useField<RelationshipValue>({ path: 'pageType' })
-  } catch (error) {
-    hookError = error
-  }
-
-  if (!configContext?.config || !fieldState || !pageTypeFieldState || hookError) {
-    if (hookError) {
-      console.warn('[PageContentField] Unable to access form context, rendering JSON fallback.', hookError)
-    }
+  if (!configContext?.config) {
     return <JSONFallbackEditor />
   }
+
+  const fieldState = useField<any>({ path: props.path })
+  const pageTypeFieldState = useField<RelationshipValue>({ path: 'pageType' })
 
   return <PageContentFieldInner {...props} fieldState={fieldState} pageTypeFieldState={pageTypeFieldState} />
 }
