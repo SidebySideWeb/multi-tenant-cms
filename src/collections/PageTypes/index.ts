@@ -130,11 +130,11 @@ export const PageTypes: CollectionConfig = {
         }
 
         if (operation === 'update' && originalDoc?.id) {
-          where.and.push({
+          where.and = [...(where.and ?? []), {
             id: {
               not_equals: originalDoc.id,
             },
-          })
+          }]
         }
 
         const existing = await req.payload.find({
