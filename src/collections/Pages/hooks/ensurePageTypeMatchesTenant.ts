@@ -2,7 +2,7 @@ import type { CollectionBeforeValidateHook } from 'payload'
 
 import { extractID } from '@/utilities/extractID'
 
-export const ensurePageTypeMatchesTenant: CollectionBeforeValidateHook = async ({ data, originalDoc, operation, req }) => {
+export const ensurePageTypeMatchesTenant: CollectionBeforeValidateHook = async ({ data = {}, originalDoc, operation, req }) => {
   const pageTypeId = extractID(data?.pageType ?? originalDoc?.pageType)
 
   if (!pageTypeId) {
