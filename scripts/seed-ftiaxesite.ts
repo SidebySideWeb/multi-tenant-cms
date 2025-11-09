@@ -9,6 +9,8 @@ import { buildDefaultEditorState } from '@payloadcms/richtext-lexical'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
+const lexical = (text: string) => buildDefaultEditorState({ text })
+
 const ensureTenant = async () => {
   const tenantSlug = 'ftiaxesite'
 
@@ -132,7 +134,7 @@ const upsertPage = async (
     slug: string
     title: string
     status?: 'draft' | 'published'
-    summary?: string
+    summary?: unknown
     content: Record<string, unknown>
     seo?: Record<string, unknown>
   },
@@ -320,7 +322,7 @@ const getFtiaxesiteSeedData = () => {
         label: 'Features Section',
         fields: [
           { name: 'title', label: 'Title', type: 'text', required: true },
-          { name: 'subtitle', label: 'Subtitle', type: 'textarea' },
+          { name: 'subtitle', label: 'Subtitle', type: 'richText' },
           {
             name: 'items',
             label: 'Feature Items',
@@ -342,7 +344,7 @@ const getFtiaxesiteSeedData = () => {
                 required: true,
               },
               { name: 'title', label: 'Title', type: 'text', required: true },
-              { name: 'description', label: 'Description', type: 'textarea', required: true },
+              { name: 'description', label: 'Description', type: 'richText', required: true },
             ],
           },
         ],
@@ -352,7 +354,7 @@ const getFtiaxesiteSeedData = () => {
         label: 'Process Section',
         fields: [
           { name: 'title', label: 'Title', type: 'text' },
-          { name: 'subtitle', label: 'Subtitle', type: 'textarea' },
+          { name: 'subtitle', label: 'Subtitle', type: 'richText' },
           {
             name: 'steps',
             label: 'Steps',
@@ -366,7 +368,7 @@ const getFtiaxesiteSeedData = () => {
                 { label: 'Check Circle', value: 'checkCircle2' },
               ] },
               { name: 'title', label: 'Title', type: 'text', required: true },
-              { name: 'description', label: 'Description', type: 'textarea', required: true },
+              { name: 'description', label: 'Description', type: 'richText', required: true },
               {
                 name: 'color',
                 label: 'Accent Color',
@@ -385,7 +387,7 @@ const getFtiaxesiteSeedData = () => {
         label: 'Contact Section',
         fields: [
           { name: 'title', label: 'Title', type: 'text', required: true },
-          { name: 'subtitle', label: 'Subtitle', type: 'textarea' },
+          { name: 'subtitle', label: 'Subtitle', type: 'richText' },
           {
             name: 'form',
             label: 'Form Labels',
@@ -443,10 +445,8 @@ const getFtiaxesiteSeedData = () => {
       headerFooterPageSlug: 'header-footer-ftiaxesite',
     },
     hero: {
-      headline: 'Φτιάξε το site σου σε 48 ώρες — από 250€',
-      subheadline: buildDefaultEditorState({
-        text: 'Με τη δύναμη της Τεχνητής Νοημοσύνης, δημιουργούμε γρήγορα, οικονομικά και επαγγελματικά websites.',
-      }),
+      headline: 'II,I1II_I I,I site III. II 48 IZI?II,?" II?IO 250,',
+      subheadline: lexical('IoI I,I I'I?IIII I,II, IIIIII,IrI, I?IIIIII?III,, I'III1II.I?I3II?II I3I?IrI3II?I, II1IIIIII1II III1 II?II3I3IIIII,I1II websites.'),
       cta: 'Ξεκίνα τώρα',
       stats: [
         { value: '48h', label: 'Παράδοση' },
@@ -456,70 +456,70 @@ const getFtiaxesiteSeedData = () => {
     },
     features: {
       title: 'Γιατί να μας επιλέξεις',
-      subtitle: 'Όλα όσα χρειάζεσαι για να έχεις έτοιμο το website σου σε 48 ώρες',
+      subtitle: lexical('Όλα όσα χρειάζεσαι για να έχεις έτοιμο το website σου σε 48 ώρες'),
       items: [
         {
           icon: 'clock',
           title: 'Παράδοση σε 48 ώρες',
-          description: 'Το website σου είναι έτοιμο μέσα σε δύο μέρες.',
+          description: lexical('Το website σου είναι έτοιμο μέσα σε δύο μέρες.'),
         },
         {
           icon: 'euro',
           title: 'Από 250€',
-          description: 'Χαμηλό κόστος χωρίς κρυφές χρεώσεις.',
+          description: lexical('Χαμηλό κόστος χωρίς κρυφές χρεώσεις.'),
         },
         {
           icon: 'trendingUp',
           title: 'SEO & Analytics',
-          description: 'Έτοιμο για Google με ενσωματωμένο Tag Manager.',
+          description: lexical('Έτοιμο για Google με ενσωματωμένο Tag Manager.'),
         },
         {
           icon: 'shield',
           title: 'Cookie Consent',
-          description: 'Συμμόρφωση με GDPR και απόλυτη διαφάνεια.',
+          description: lexical('Συμμόρφωση με GDPR και απόλυτη διαφάνεια.'),
         },
         {
           icon: 'smartphone',
           title: 'Responsive Design',
-          description: 'Λειτουργεί άψογα σε κινητά, tablet και υπολογιστές.',
+          description: lexical('Λειτουργεί άψογα σε κινητά, tablet και υπολογιστές.'),
         },
         {
           icon: 'zap',
           title: 'AI Technology',
-          description: 'Χρησιμοποιούμε Τεχνητή Νοημοσύνη για γρήγορη ανάπτυξη.',
+          description: lexical('Χρησιμοποιούμε Τεχνητή Νοημοσύνη για γρήγορη ανάπτυξη.'),
         },
       ],
     },
     process: {
       title: 'Πώς δουλεύουμε',
-      subtitle: 'Από την ιδέα στην online παρουσία — απλά, γρήγορα και αποτελεσματικά.',
+      subtitle: lexical('Από την ιδέα στην online παρουσία — απλά, γρήγορα και αποτελεσματικά.'),
       steps: [
         {
           number: '01',
           icon: 'fileText',
           title: 'Συμπληρώνεις τη φόρμα',
-          description: 'Μας λες τι χρειάζεσαι.',
+          description: lexical('Μας λες τι χρειάζεσαι.'),
           color: 'teal',
         },
         {
           number: '02',
           icon: 'wand2',
           title: 'Δημιουργούμε το σχέδιο',
-          description: 'Χρησιμοποιούμε AI για να σχεδιάσουμε το website σου.',
+          description: lexical('Χρησιμοποιούμε AI για να σχεδιάσουμε το website σου.'),
           color: 'navy',
         },
         {
           number: '03',
           icon: 'checkCircle2',
           title: 'Παραδίδουμε σε 48 ώρες',
-          description: 'Παραλαμβάνεις έτοιμο site με SEO & Analytics.',
+          description: lexical('Παραλαμβάνεις έτοιμο site με SEO & Analytics.'),
           color: 'teal',
         },
       ],
     },
     contact: {
       title: 'Ξεκίνα τη κατασκευή της σελίδας σου σήμερα',
-      subtitle: 'Πες μας τι χρειάζεσαι — μίλησε το brief σου με ένα κλικ',
+      subtitle: lexical('Πες μας τι χρειάζεσαι — μίλησε το brief σου με ένα κλικ'),
       form: {
         name: 'Όνομα',
         email: 'Email',
@@ -563,11 +563,13 @@ const getFtiaxesiteSeedData = () => {
         slug: 'ftiaxesite-homepage',
         title: 'Ftiaxesite Homepage',
         pageTypeSlug: 'home-ftiaxesite',
+        summary: lexical('IoI I,I I'I?IIII I,II, IIIIII,IrI, I?IIIIII?III,, I'III1II.I?I3II?II I3I?IrI3II?I.'),
         content: homepageContent,
         seo: {
-          title: 'ftiaxesite.gr - AI Websites σε 48 Ώρες',
-          description:
-            'Φτιάξε το site σου σε 48 ώρες με τη δύναμη της Τεχνητής Νοημοσύνης. Οικονομικά, γρήγορα και επαγγελματικά websites από 250€.',
+          title: 'ftiaxesite.gr - AI Websites II 48 I?I?II,',
+          description: lexical(
+            'II,I1II_I I,I site III. II 48 IZI?II, II I,I I'I?IIII I,II, IIIIII,IrI, I?IIIIII?III,. IYI1IIIIII1II, I3I?IrI3II?I III1 II?II3I3IIIII,I1II websites II?IO 250,.',
+          ),
         },
       },
     ],
@@ -604,6 +606,7 @@ const run = async () => {
     const pageId = await upsertPage(tenantId, pageTypeId, {
       slug: page.slug,
       title: page.title,
+      summary: page.summary,
       content: page.content,
       seo: page.seo,
       status: 'published',

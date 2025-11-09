@@ -204,9 +204,27 @@ export async function populateTenantHomepage(
       cta: data.hero.cta,
       stats: data.hero.stats,
     },
-    features: data.features as any,
-    process: data.process as any,
-    contact: data.contact,
+    features: {
+      title: data.features.title,
+      subtitle: toLexicalState(data.features.subtitle),
+      items: data.features.items.map((item) => ({
+        ...item,
+        description: toLexicalState(item.description),
+      })),
+    },
+    process: {
+      title: data.process.title,
+      subtitle: toLexicalState(data.process.subtitle),
+      steps: data.process.steps.map((step) => ({
+        ...step,
+        description: toLexicalState(step.description),
+      })),
+    },
+    contact: {
+      title: data.contact.title,
+      subtitle: toLexicalState(data.contact.subtitle),
+      form: data.contact.form,
+    },
   }
 
   const contentPayload = {
@@ -223,7 +241,7 @@ export async function populateTenantHomepage(
       id: existingHomepage.docs[0].id,
       data: {
         title: data.hero.headline,
-        summary: data.hero.subheadline,
+        summary: toLexicalState(data.hero.subheadline),
         pageType: pageTypeId,
         sections: sectionsPayload as any,
         content: contentPayload as any,
@@ -237,7 +255,7 @@ export async function populateTenantHomepage(
         slug: 'ftiaxesite-homepage',
         tenant: tenantIdNumber as any,
         title: data.hero.headline,
-        summary: data.hero.subheadline,
+        summary: toLexicalState(data.hero.subheadline),
         pageType: pageTypeId,
         status: 'published',
         sections: sectionsPayload as any,
