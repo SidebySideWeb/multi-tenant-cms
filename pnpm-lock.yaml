@@ -44,6 +44,9 @@ importers:
       payload:
         specifier: 3.62.0
         version: 3.62.0(graphql@16.11.0)(typescript@5.5.2)
+      pg:
+        specifier: ^8.16.3
+        version: 8.16.3
       qs-esm:
         specifier: 7.0.2
         version: 7.0.2
