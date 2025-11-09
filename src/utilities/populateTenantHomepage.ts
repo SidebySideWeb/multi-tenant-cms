@@ -241,7 +241,7 @@ export async function populateTenantHomepage(
       id: existingHomepage.docs[0].id,
       data: {
         title: data.hero.headline,
-        summary: toLexicalState(data.hero.subheadline),
+        summary: toLexicalState(data.hero.subheadline) as any,
         pageType: pageTypeId,
         sections: sectionsPayload as any,
         content: contentPayload as any,
@@ -255,7 +255,7 @@ export async function populateTenantHomepage(
         slug: 'ftiaxesite-homepage',
         tenant: tenantIdNumber as any,
         title: data.hero.headline,
-        summary: toLexicalState(data.hero.subheadline),
+        summary: toLexicalState(data.hero.subheadline) as any,
         pageType: pageTypeId,
         status: 'published',
         sections: sectionsPayload as any,
