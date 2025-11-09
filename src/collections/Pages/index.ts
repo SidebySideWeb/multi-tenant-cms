@@ -9,6 +9,7 @@ import { tenantScopedReadAccess } from './access/tenantScopedReadAccess'
 import { extractID } from '@/utilities/extractID'
 import { getUserTenantIDs } from '@/utilities/getUserTenantIDs'
 import { isSuperAdmin } from '@/access/isSuperAdmin'
+import { buildDefaultEditorState } from '@payloadcms/richtext-lexical'
 
 const inferTenantFromData = ({ data }: { data?: any }): string | number | null => {
   if (!data) {
@@ -22,6 +23,137 @@ const inferTenantFromData = ({ data }: { data?: any }): string | number | null =
   }
 
   return extractID(tenantField)
+}
+
+const isLexicalState = (value: unknown): value is { root: Record<string, unknown> } =>
+  typeof value === 'object' && value !== null && 'root' in (value as Record<string, unknown>)
+
+const createEmptyParagraph = () => ({
+  type: 'paragraph',
+  format: '',
+  indent: 0,
+  direction: 'ltr',
+  version: 1,
+  children: [],
+})
+
+const ensureNonEmptyLexical = (state: any) => {
+  if (!state || typeof state !== 'object') {
+    return {
+      root: {
+        type: 'root',
+        format: '',
+        indent: 0,
+        direction: 'ltr',
+        version: 1,
+        children: [createEmptyParagraph()],
+      },
+    }
+  }
+
+  const root = state.root && typeof state.root === 'object' ? state.root : {}
+  const children = Array.isArray((root as any).children) ? (root as any).children : []
+
+  return {
+    ...state,
+    root: {
+      type: 'root',
+      format: '',
+      indent: 0,
+      direction: 'ltr',
+      version: 1,
+      ...(root as Record<string, unknown>),
+      children: children.length > 0 ? children : [createEmptyParagraph()],
+    },
+  }
+}
+
+const ensureLexicalState = (value: unknown) => {
+  if (isLexicalState(value)) {
+    return ensureNonEmptyLexical(value)
+  }
+
+  if (typeof value === 'string') {
+    try {
+      const parsed = JSON.parse(value)
+      if (isLexicalState(parsed)) {
+        return ensureNonEmptyLexical(parsed)
+      }
+    } catch (error) {
+      // ignore parse error and fall back to default state
+    }
+  }
+
+  const text = typeof value === 'string' ? value : ''
+  return ensureNonEmptyLexical(buildDefaultEditorState({ text }))
+}
+
+const normalizeFeatureItems = (items: unknown) => {
+  if (!Array.isArray(items)) return items
+
+  return items.map((item) => {
+    if (!item || typeof item !== 'object') return item
+    const entry = item as Record<string, unknown>
+    return {
+      ...entry,
+      description: ensureLexicalState(entry.description),
+    }
+  })
+}
+
+const normalizeProcessSteps = (steps: unknown) => {
+  if (!Array.isArray(steps)) return steps
+
+  return steps.map((step) => {
+    if (!step || typeof step !== 'object') return step
+    const entry = step as Record<string, unknown>
+    return {
+      ...entry,
+      description: ensureLexicalState(entry.description),
+    }
+  })
+}
+
+const normalizeSections = (sections: unknown) => {
+  if (!sections || typeof sections !== 'object') return sections
+
+  const input = sections as Record<string, any>
+  const result: Record<string, any> = { ...input }
+
+  if (input.hero && typeof input.hero === 'object') {
+    result.hero = {
+      ...input.hero,
+      subheadline: ensureLexicalState(input.hero.subheadline),
+    }
+  }
+
+  if (input.features && typeof input.features === 'object') {
+    const features = input.features as Record<string, any>
+    result.features = {
+      ...features,
+      subtitle: ensureLexicalState(features.subtitle),
+      items: normalizeFeatureItems(features.items),
+    }
+  }
+
+  if (input.process && typeof input.process === 'object') {
+    const process = input.process as Record<string, any>
+    result.process = {
+      ...process,
+      subtitle: ensureLexicalState(process.subtitle),
+      steps: normalizeProcessSteps(process.steps),
+    }
+  }
+
+  if (input.contact && typeof input.contact === 'object') {
+    const contact = input.contact as Record<string, any>
+    result.contact = {
+      ...contact,
+      subtitle: ensureLexicalState(contact.subtitle),
+    }
+  }
+
+  return result
 }
 
 export const Pages: CollectionConfig = {
@@ -121,9 +253,13 @@ export const Pages: CollectionConfig = {
     },
     {
       name: 'summary',
-      type: 'textarea',
+      type: 'richText',
       admin: {
         description: 'Optional internal summary describing the purpose of this page.',
+      },
+      hooks: {
+        beforeValidate: [({ value }) => ensureLexicalState(value)],
+        afterRead: [({ value }) => ensureLexicalState(value)],
       },
     },
     {
@@ -167,25 +303,25 @@ export const Pages: CollectionConfig = {
         beforeValidate: [
           ({ value, siblingData }) => {
             if (value && typeof value === 'object' && Object.keys(value).length > 0) {
-              return value
+              return normalizeSections(value)
             }
             const sections = siblingData?.content?.sections
             if (sections && typeof sections === 'object') {
-              return sections
+              return normalizeSections(sections)
             }
-            return value
+            return normalizeSections(value)
           },
         ],
         afterRead: [
           ({ value, siblingData }) => {
             if (value && typeof value === 'object' && Object.keys(value).length > 0) {
-              return value
+              return normalizeSections(value)
             }
             const sections = siblingData?.content?.sections
             if (sections && typeof sections === 'object') {
-              return sections
+              return normalizeSections(sections)
             }
-            return value
+            return normalizeSections(value)
           },
         ],
       },
@@ -258,7 +394,11 @@ export const Pages: CollectionConfig = {
             },
             {
               name: 'subtitle',
-              type: 'textarea',
+              type: 'richText',
+              hooks: {
+                beforeValidate: [({ value }) => ensureLexicalState(value)],
+                afterRead: [({ value }) => ensureLexicalState(value)],
+              },
             },
             {
               name: 'items',
@@ -287,8 +427,12 @@ export const Pages: CollectionConfig = {
                 },
                 {
                   name: 'description',
-                  type: 'textarea',
+                  type: 'richText',
                   required: true,
+                  hooks: {
+                    beforeValidate: [({ value }) => ensureLexicalState(value)],
+                    afterRead: [({ value }) => ensureLexicalState(value)],
+                  },
                 },
               ],
             },
@@ -307,7 +451,11 @@ export const Pages: CollectionConfig = {
             },
             {
               name: 'subtitle',
-              type: 'textarea',
+              type: 'richText',
+              hooks: {
+                beforeValidate: [({ value }) => ensureLexicalState(value)],
+                afterRead: [({ value }) => ensureLexicalState(value)],
+              },
             },
             {
               name: 'steps',
@@ -340,8 +488,12 @@ export const Pages: CollectionConfig = {
                 },
                 {
                   name: 'description',
-                  type: 'textarea',
+                  type: 'richText',
                   required: true,
+                  hooks: {
+                    beforeValidate: [({ value }) => ensureLexicalState(value)],
+                    afterRead: [({ value }) => ensureLexicalState(value)],
+                  },
                 },
                 {
                   name: 'color',
@@ -369,7 +521,11 @@ export const Pages: CollectionConfig = {
             },
             {
               name: 'subtitle',
-              type: 'textarea',
+              type: 'richText',
+              hooks: {
+                beforeValidate: [({ value }) => ensureLexicalState(value)],
+                afterRead: [({ value }) => ensureLexicalState(value)],
+              },
             },
             {
               name: 'form',
@@ -595,7 +751,9 @@ export const Pages: CollectionConfig = {
               return siblingData?.sharedLayout ?? siblingData?.content ?? {}
             }
 
-            const sections = siblingData?.sections ?? siblingData?.content?.sections ?? {}
+            const sections = normalizeSections(
+              siblingData?.sections ?? siblingData?.content?.sections ?? {},
+            )
             const headerFooterSlug =
               siblingData?.headerFooterPageSlug ??
               siblingData?.content?.shared?.headerFooterPageSlug ??
@@ -635,7 +793,11 @@ export const Pages: CollectionConfig = {
         },
         {
           name: 'description',
-          type: 'textarea',
+          type: 'richText',
+          hooks: {
+            beforeValidate: [({ value }) => ensureLexicalState(value)],
+            afterRead: [({ value }) => ensureLexicalState(value)],
+          },
         },
         {
           name: 'image',

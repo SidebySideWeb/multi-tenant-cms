@@ -143,7 +143,21 @@ export interface Page {
   /**
    * Optional internal summary describing the purpose of this page.
    */
-  summary?: string | null;
+  summary?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   /**
    * Slug of the shared header/footer page used by this homepage.
    */
@@ -196,7 +210,21 @@ export interface Page {
      */
     features?: {
       title?: string | null;
-      subtitle?: string | null;
+      subtitle?: {
+        root: {
+          type: string;
+          children: {
+            type: any;
+            version: number;
+            [k: string]: unknown;
+          }[];
+          direction: ('ltr' | 'rtl') | null;
+          format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+          indent: number;
+          version: number;
+        };
+        [k: string]: unknown;
+      } | null;
       /**
        * Λίστα λειτουργιών.
        */
@@ -204,7 +232,21 @@ export interface Page {
         | {
             icon?: ('clock' | 'euro' | 'trendingUp' | 'shield' | 'smartphone' | 'zap') | null;
             title: string;
-            description: string;
+            description: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            };
             id?: string | null;
           }[]
         | null;
@@ -214,7 +256,21 @@ export interface Page {
      */
     process?: {
       title?: string | null;
-      subtitle?: string | null;
+      subtitle?: {
+        root: {
+          type: string;
+          children: {
+            type: any;
+            version: number;
+            [k: string]: unknown;
+          }[];
+          direction: ('ltr' | 'rtl') | null;
+          format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+          indent: number;
+          version: number;
+        };
+        [k: string]: unknown;
+      } | null;
       /**
        * Βήματα διαδικασίας.
        */
@@ -223,7 +279,21 @@ export interface Page {
             number?: string | null;
             icon?: ('fileText' | 'wand2' | 'checkCircle2') | null;
             title: string;
-            description: string;
+            description: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            };
             color?: ('teal' | 'navy') | null;
             id?: string | null;
           }[]
@@ -234,7 +304,21 @@ export interface Page {
      */
     contact?: {
       title?: string | null;
-      subtitle?: string | null;
+      subtitle?: {
+        root: {
+          type: string;
+          children: {
+            type: any;
+            version: number;
+            [k: string]: unknown;
+          }[];
+          direction: ('ltr' | 'rtl') | null;
+          format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+          indent: number;
+          version: number;
+        };
+        [k: string]: unknown;
+      } | null;
       form?: {
         name?: string | null;
         email?: string | null;
@@ -316,7 +400,21 @@ export interface Page {
      * Overrides the default meta title (defaults to page title).
      */
     title?: string | null;
-    description?: string | null;
+    description?: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
     image?: (number | null) | Media;
   };
   publishedAt?: string | null;

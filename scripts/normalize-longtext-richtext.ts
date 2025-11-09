@@ -51,16 +51,56 @@ const lexicalFromText = (textExpr: string) => `
   )
 `
 
+const createEmptyParagraph = () => ({
+  type: 'paragraph',
+  format: '',
+  indent: 0,
+  version: 1,
+  direction: 'ltr',
+  children: [],
+})
+
+const ensureNonEmptyLexical = (state: any) => {
+  if (!state || typeof state !== 'object') {
+    return {
+      root: {
+        type: 'root',
+        format: '',
+        indent: 0,
+        version: 1,
+        direction: 'ltr',
+        children: [createEmptyParagraph()],
+      },
+    }
+  }
+
+  const root = state.root && typeof state.root === 'object' ? state.root : {}
+  const children = Array.isArray((root as any).children) ? (root as any).children : []
+
+  return {
+    ...state,
+    root: {
+      type: 'root',
+      format: '',
+      indent: 0,
+      version: 1,
+      direction: 'ltr',
+      ...(root as Record<string, unknown>),
+      children: children.length > 0 ? children : [createEmptyParagraph()],
+    },
+  }
+}
+
 const ensureLexical = (value: unknown) => {
   if (value && typeof value === 'object' && 'root' in (value as Record<string, unknown>)) {
-    return value
+    return ensureNonEmptyLexical(value)
   }
 
   if (typeof value === 'string') {
     try {
       const parsed = JSON.parse(value)
       if (parsed && typeof parsed === 'object' && 'root' in parsed) {
-        return parsed
+        return ensureNonEmptyLexical(parsed)
       }
     } catch (error) {
       // ignore parse error, fallback to text conversion
@@ -68,37 +108,39 @@ const ensureLexical = (value: unknown) => {
   }
 
   const text = typeof value === 'string' ? value : ''
-  return {
+  const children = text
+    ? [
+        {
+          type: 'paragraph',
+          format: '',
+          indent: 0,
+          version: 1,
+          direction: 'ltr',
+          children: [
+            {
+              type: 'text',
+              text,
+              format: 0,
+              detail: 0,
+              mode: 'normal',
+              style: '',
+              version: 1,
+            },
+          ],
+        },
+      ]
+    : []
+
+  return ensureNonEmptyLexical({
     root: {
       type: 'root',
       format: '',
       indent: 0,
       version: 1,
       direction: 'ltr',
-      children: text
-        ? [
-            {
-              type: 'paragraph',
-              format: '',
-              indent: 0,
-              version: 1,
-              direction: 'ltr',
-              children: [
-                {
-                  type: 'text',
-                  text,
-                  format: 0,
-                  detail: 0,
-                  mode: 'normal',
-                  style: '',
-                  version: 1,
-                },
-              ],
-            },
-          ]
-        : [],
+      children,
     },
-  }
+  })
 }
 
 const normalizeSectionsContent = (content: any) => {
