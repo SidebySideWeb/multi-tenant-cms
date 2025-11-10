@@ -756,7 +756,7 @@ export const Pages: CollectionConfig = {
         description:
           'Το περιεχόμενο της σελίδας. Τα διαθέσιμα πεδία εξαρτώνται από το επιλεγμένο Page Type του tenant.',
         components: {
-          Field: PageContentField,
+          Field: PageContentField as any,
         },
       },
       hooks: {
