@@ -778,7 +778,8 @@ function useConfigSafe() {
   }
 }
 
-const PageContentField = PageContentFieldBase
+const PageContentField = PageContentFieldBase as typeof PageContentFieldBase & { client?: boolean }
+PageContentField.client = true
 
 export default PageContentField
 
