@@ -10,7 +10,6 @@ import { extractID } from '@/utilities/extractID'
 import { getUserTenantIDs } from '@/utilities/getUserTenantIDs'
 import { isSuperAdmin } from '@/access/isSuperAdmin'
 import { buildDefaultEditorState } from '@payloadcms/richtext-lexical'
-import PageContentField from '@/admin/components/PageContentField'
 
 const inferTenantFromData = ({ data }: { data?: any }): string | number | null => {
   if (!data) {
@@ -756,7 +755,7 @@ export const Pages: CollectionConfig = {
         description:
           'Το περιεχόμενο της σελίδας. Τα διαθέσιμα πεδία εξαρτώνται από το επιλεγμένο Page Type του tenant.',
         components: {
-          Field: PageContentField as any,
+          Field: '@/admin/components/PageContentField#default' as unknown as never,
         },
       },
       hooks: {
