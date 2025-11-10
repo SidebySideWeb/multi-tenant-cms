@@ -7,7 +7,7 @@ import { RichTextField as LexicalRichTextField, buildDefaultEditorState } from '
 import './PageContentField.scss'
 
 type PayloadJSONFieldProps = {
-  path: string
+  path?: string
   value?: any
   onChange?: (value: any) => void
   [key: string]: unknown
