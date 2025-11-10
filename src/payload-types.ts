@@ -69,6 +69,7 @@ export interface Config {
   collections: {
     pages: Page;
     'page-types': PageType;
+    posts: Post;
     users: User;
     tenants: Tenant;
     media: Media;
@@ -81,6 +82,7 @@ export interface Config {
   collectionsSelect: {
     pages: PagesSelect<false> | PagesSelect<true>;
     'page-types': PageTypesSelect<false> | PageTypesSelect<true>;
+    posts: PostsSelect<false> | PostsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     tenants: TenantsSelect<false> | TenantsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
@@ -529,6 +531,78 @@ export interface Media {
   focalY?: number | null;
 }
 /**
+ * Blog posts scoped per tenant.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts".
+ */
+export interface Post {
+  id: number;
+  tenant?: (number | null) | Tenant;
+  title: string;
+  /**
+   * Unique per tenant. Used in the post URL.
+   */
+  slug: string;
+  status?: ('draft' | 'published') | null;
+  /**
+   * Short summary for listing views.
+   */
+  excerpt?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Full URL to the hero image.
+   */
+  heroImage?: string | null;
+  /**
+   * Name displayed as the author.
+   */
+  authorName?: string | null;
+  publishedAt?: string | null;
+  /**
+   * Full article content.
+   */
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Optional tags for grouping posts.
+   */
+  tags?:
+    | {
+        value?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
@@ -592,6 +666,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'page-types';
         value: number | PageType;
+      } | null)
+    | ({
+        relationTo: 'posts';
+        value: number | Post;
       } | null)
     | ({
         relationTo: 'users';
@@ -804,6 +882,29 @@ export interface PageTypesSelect<T extends boolean = true> {
   description?: T;
   fields?: T;
   isDefault?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts_select".
+ */
+export interface PostsSelect<T extends boolean = true> {
+  tenant?: T;
+  title?: T;
+  slug?: T;
+  status?: T;
+  excerpt?: T;
+  heroImage?: T;
+  authorName?: T;
+  publishedAt?: T;
+  content?: T;
+  tags?:
+    | T
+    | {
+        value?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }

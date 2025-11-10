@@ -10,6 +10,7 @@ import { extractID } from '@/utilities/extractID'
 import { getUserTenantIDs } from '@/utilities/getUserTenantIDs'
 import { isSuperAdmin } from '@/access/isSuperAdmin'
 import { buildDefaultEditorState } from '@payloadcms/richtext-lexical'
+import PageContentField from '@/admin/components/PageContentField'
 
 const inferTenantFromData = ({ data }: { data?: any }): string | number | null => {
   if (!data) {
@@ -156,6 +157,16 @@ const normalizeSections = (sections: unknown) => {
   return result
 }
 
+const getDefaultHeaderFooterSlug = (slug?: string | null) => {
+  if (!slug) {
+    return 'header-footer-ftiaxesite'
+  }
+  if (slug === 'kalitechnia-homepage') {
+    return 'header-footer-kalitechnia'
+  }
+  return 'header-footer-ftiaxesite'
+}
+
 export const Pages: CollectionConfig = {
   slug: 'pages',
   access: {
@@ -268,7 +279,10 @@ export const Pages: CollectionConfig = {
       defaultValue: 'header-footer-ftiaxesite',
       admin: {
         description: 'Slug of the shared header/footer page used by this homepage.',
-        condition: (data) => typeof data?.slug === 'string' && data.slug === 'ftiaxesite-homepage',
+        condition: (data) => {
+          const slug = data?.slug
+          return typeof slug === 'string' && (slug === 'ftiaxesite-homepage' || slug === 'kalitechnia-homepage')
+        },
         placeholder: 'header-footer-ftiaxesite',
       },
       hooks: {
@@ -276,13 +290,13 @@ export const Pages: CollectionConfig = {
           ({ value, siblingData }) =>
             value ??
             siblingData?.content?.shared?.headerFooterPageSlug ??
-            'header-footer-ftiaxesite',
+            getDefaultHeaderFooterSlug(siblingData?.slug),
         ],
         afterRead: [
           ({ value, siblingData }) =>
             value ??
             siblingData?.content?.shared?.headerFooterPageSlug ??
-            'header-footer-ftiaxesite',
+            getDefaultHeaderFooterSlug(siblingData?.slug),
         ],
       },
     },
@@ -579,7 +593,7 @@ export const Pages: CollectionConfig = {
         description: 'Κοινό header/footer για όλες τις σελίδες του tenant.',
         condition: (data) => {
           const slug = data?.slug
-          if (typeof slug === 'string' && slug === 'header-footer-ftiaxesite') {
+          if (typeof slug === 'string' && (slug === 'header-footer-ftiaxesite' || slug === 'header-footer-kalitechnia')) {
             return true
           }
           return false
@@ -739,8 +753,11 @@ export const Pages: CollectionConfig = {
       name: 'content',
       type: 'json',
       admin: {
-        hidden: true,
-        readOnly: true,
+        description:
+          'Το περιεχόμενο της σελίδας. Τα διαθέσιμα πεδία εξαρτώνται από το επιλεγμένο Page Type του tenant.',
+        components: {
+          Field: PageContentField,
+        },
       },
       hooks: {
         beforeValidate: [
@@ -757,7 +774,7 @@ export const Pages: CollectionConfig = {
             const headerFooterSlug =
               siblingData?.headerFooterPageSlug ??
               siblingData?.content?.shared?.headerFooterPageSlug ??
-              'header-footer-ftiaxesite'
+              getDefaultHeaderFooterSlug(siblingData?.slug)
 
             const sharedLayout = siblingData?.sharedLayout ?? siblingData?.content?.shared?.layout ?? {}
 

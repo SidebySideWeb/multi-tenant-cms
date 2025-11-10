@@ -7,6 +7,7 @@ import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 
 import { Media } from './collections/Media'
+import { Posts } from './collections/Posts'
 import { PageTypes } from './collections/PageTypes'
 import { Pages } from './collections/Pages'
 import { Tenants } from './collections/Tenants'
@@ -34,7 +35,7 @@ export default buildConfig({
   },
   cors: allowedOrigins,
   serverURL: process.env.PAYLOAD_PUBLIC_SERVER_URL || process.env.NEXT_PUBLIC_PAYLOAD_URL || 'http://localhost:3000',
-  collections: [Pages, PageTypes, Users, Tenants, Media],
+  collections: [Pages, PageTypes, Posts, Users, Tenants, Media],
   localization: {
     locales: ['el', 'en'],
     defaultLocale: 'el',
@@ -85,6 +86,7 @@ export default buildConfig({
     multiTenantPlugin<Config>({
       collections: {
         pages: {},
+        posts: {},
         media: {},
       },
       tenantField: {
