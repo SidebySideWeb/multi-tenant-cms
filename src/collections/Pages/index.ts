@@ -6,6 +6,7 @@ import { ensureUniqueSlug } from './hooks/ensureUniqueSlug'
 import { slugifyInput } from './hooks/slugifyInput'
 import { superAdminOrTenantAdminAccess } from './access/superAdminOrTenantAdmin'
 import { tenantScopedReadAccess } from './access/tenantScopedReadAccess'
+import PageContentField from '@/admin/components/PageContentField'
 import { extractID } from '@/utilities/extractID'
 import { getUserTenantIDs } from '@/utilities/getUserTenantIDs'
 import { isSuperAdmin } from '@/access/isSuperAdmin'
@@ -755,7 +756,7 @@ export const Pages: CollectionConfig = {
         description:
           'Το περιεχόμενο της σελίδας. Τα διαθέσιμα πεδία εξαρτώνται από το επιλεγμένο Page Type του tenant.',
         components: {
-          Field: '@/admin/components/PageContentField#default' as unknown as never,
+          Field: PageContentField as any,
         },
       },
       hooks: {

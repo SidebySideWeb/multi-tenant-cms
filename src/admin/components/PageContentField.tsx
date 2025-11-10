@@ -1,9 +1,8 @@
 'use client'
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { fieldBaseClass } from '@payloadcms/ui/fields/shared'
 import { useField } from '@payloadcms/ui/forms/useField'
-import { useConfig } from '@payloadcms/ui/providers/Config'
 import { RichTextField as LexicalRichTextField, buildDefaultEditorState } from '@payloadcms/richtext-lexical/client'
 import './PageContentField.scss'
 
@@ -606,9 +605,7 @@ const DynamicPageContentEditor: React.FC<{
   )
 }
 
-const JSONFallbackEditor: React.FC<PayloadJSONFieldProps> = ({ value, onChange, path }) => {
-  const configContext = useConfigSafe()
-  const readonly = !configContext
+const JSONFallbackEditor: React.FC<PayloadJSONFieldProps> = ({ value, onChange }) => {
   const [stringValue, setStringValue] = useState(() => JSON.stringify(value ?? {}, null, 2))
   const [parseError, setParseError] = useState<string | null>(null)
 
@@ -635,7 +632,6 @@ const JSONFallbackEditor: React.FC<PayloadJSONFieldProps> = ({ value, onChange, 
       <textarea
         className="page-content-editor__textarea"
         value={stringValue}
-        readOnly={readonly}
         onChange={handleChange}
         rows={12}
       />
@@ -695,7 +691,7 @@ const PageContentFieldInner: React.FC<PageContentFieldInnerProps> = ({ fieldStat
     return (
       <div className={`${fieldBaseClass} page-content-editor__empty`}>
         <p>Επιλέξτε ένα Page Type για να εμφανιστούν τα πεδία περιεχομένου.</p>
-        <JSONFallbackEditor path={fieldState.path} value={value} onChange={setValue} />
+        <JSONFallbackEditor value={value} onChange={setValue} />
       </div>
     )
   }
@@ -712,13 +708,13 @@ const PageContentFieldInner: React.FC<PageContentFieldInnerProps> = ({ fieldStat
     return (
       <div className={`${fieldBaseClass} page-content-editor__empty`}>
         <p>Αποτυχία φόρτωσης page type: {loadError}</p>
-        <JSONFallbackEditor path={fieldState.path} value={value} onChange={setValue} />
+        <JSONFallbackEditor value={value} onChange={setValue} />
       </div>
     )
   }
 
   if (!pageType) {
-    return <JSONFallbackEditor path={fieldState.path} value={value} onChange={setValue} />
+    return <JSONFallbackEditor value={value} onChange={setValue} />
   }
 
   const schema = normalizePageTypeSchema(pageType.fields)
@@ -728,7 +724,7 @@ const PageContentFieldInner: React.FC<PageContentFieldInnerProps> = ({ fieldStat
       <div className={`${fieldBaseClass} page-content-editor__fallback`}>
         {showError && errorMessage && <p className="page-content-editor__error">{errorMessage}</p>}
         <p>Δεν υπάρχει δυναμικός επεξεργαστής για το συγκεκριμένο page type. Χρησιμοποιήστε την JSON προβολή.</p>
-        <JSONFallbackEditor path={fieldState.path} value={value} onChange={setValue} />
+        <JSONFallbackEditor value={value} onChange={setValue} />
       </div>
     )
   }
@@ -748,13 +744,6 @@ const PageContentFieldWithContext: React.FC<PayloadJSONFieldProps> = (props) => 
   const fieldState = useField<any>({ path: props.path })
   const pageTypeFieldState = useField<RelationshipValue>({ path: 'pageType' })
 
-  const configContext = useConfigSafe()
-
-  if (!configContext?.config) {
-    console.warn('[PageContentField] Config context unavailable, rendering JSON fallback.')
-    return <JSONFallbackEditor path={fieldState.path} value={fieldState.value} onChange={fieldState.setValue} />
-  }
-
   return <PageContentFieldInner {...props} fieldState={fieldState} pageTypeFieldState={pageTypeFieldState} />
 }
 
@@ -768,14 +757,6 @@ const PageContentFieldBase: React.FC<PayloadJSONFieldProps> = (props) => {
   if (!isClient) return null
 
   return <PageContentFieldWithContext {...props} />
-}
-
-function useConfigSafe() {
-  try {
-    return useConfig()
-  } catch {
-    return undefined
-  }
 }
 
 const PageContentField = PageContentFieldBase as typeof PageContentFieldBase & { client?: boolean }
