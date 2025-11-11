@@ -258,6 +258,10 @@ const getManualSections = (slug: unknown, siblingData: any) => {
     return siblingData?.kalitechniaSections
   }
 
+  if (slug.startsWith('kalitechnia-') && slug !== 'header-footer-kalitechnia') {
+    return siblingData?.kalitechniaContentSections
+  }
+
   return undefined
 }
 
@@ -1279,6 +1283,51 @@ export const Pages: CollectionConfig = {
           ],
         },
       ],
+    },
+    {
+      name: 'kalitechniaContentSections',
+      type: 'json',
+      admin: {
+        description: 'Επεξεργασία ενοτήτων περιεχομένου για σελίδες της Kalitechnia βάσει του page type.',
+        condition: (data) => {
+          const slug = data?.slug
+          return (
+            typeof slug === 'string' &&
+            slug.startsWith('kalitechnia-') &&
+            slug !== 'kalitechnia-homepage' &&
+            slug !== 'header-footer-kalitechnia'
+          )
+        },
+        components: {
+          Field: '@/admin/components/PageContentField#default' as unknown as never,
+        },
+      },
+      hooks: {
+        beforeValidate: [
+          ({ value, siblingData }) => {
+            if (value && typeof value === 'object' && Object.keys(value).length > 0) {
+              return normalizeSections(value)
+            }
+            const sections = siblingData?.content?.sections
+            if (sections && typeof sections === 'object') {
+              return normalizeSections(sections)
+            }
+            return normalizeSections(value)
+          },
+        ],
+        afterRead: [
+          ({ value, siblingData }) => {
+            if (value && typeof value === 'object' && Object.keys(value).length > 0) {
+              return normalizeSections(value)
+            }
+            const sections = siblingData?.content?.sections
+            if (sections && typeof sections === 'object') {
+              return normalizeSections(sections)
+            }
+            return normalizeSections(value)
+          },
+        ],
+      },
     },
     {
       name: 'content',
