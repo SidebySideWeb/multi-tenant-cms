@@ -333,9 +333,9 @@ export interface Page {
     };
   };
   /**
-   * Διαχειριστείτε τα περιεχόμενα της αρχικής σελίδας (Kalitechnia).
+   * Διαχειριστείτε τα περιεχόμενα της αρχικής σελίδας (Kallitechnia).
    */
-  kalitechniaSections?: {
+  kallitechniaSections?: {
     /**
      * Hero section της αρχικής σελίδας.
      */
@@ -650,9 +650,9 @@ export interface Page {
     };
   };
   /**
-   * Κοινό header/footer layout για την Kalitechnia.
+   * Κοινό header/footer layout για την Kallitechnia.
    */
-  kalitechniaSharedLayout?: {
+  kallitechniaSharedLayout?: {
     /**
      * Ρυθμίσεις κεφαλίδας.
      */
@@ -728,6 +728,18 @@ export interface Page {
       copyright?: string | null;
     };
   };
+  /**
+   * Επεξεργασία ενοτήτων περιεχομένου για σελίδες της Kallitechnia βάσει του page type.
+   */
+  kallitechniaContentSections?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
    * Το περιεχόμενο της σελίδας. Τα διαθέσιμα πεδία εξαρτώνται από το επιλεγμένο Page Type του tenant.
    */
@@ -1153,7 +1165,7 @@ export interface PagesSelect<T extends boolean = true> {
                   };
             };
       };
-  kalitechniaSections?:
+  kallitechniaSections?:
     | T
     | {
         hero?:
@@ -1297,7 +1309,7 @@ export interface PagesSelect<T extends boolean = true> {
               copyright?: T;
             };
       };
-  kalitechniaSharedLayout?:
+  kallitechniaSharedLayout?:
     | T
     | {
         header?:
@@ -1375,6 +1387,7 @@ export interface PagesSelect<T extends boolean = true> {
               copyright?: T;
             };
       };
+  kallitechniaContentSections?: T;
   content?: T;
   seo?:
     | T

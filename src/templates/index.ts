@@ -148,8 +148,8 @@ export const ftiaxesiteTemplate: TemplateDefinition = {
   ],
 }
 
-export const kalitechniaTemplate: TemplateDefinition = {
-  name: 'kalitechnia',
+export const kallitechniaTemplate: TemplateDefinition = {
+  name: 'kallitechnia',
   description: 'Πλήρες πρότυπο συλλόγου γυμναστικής με αρχική, σελίδες συλλόγου, τμημάτων, εγγραφών, media και blog.',
   pages: [
     {
@@ -158,7 +158,7 @@ export const kalitechniaTemplate: TemplateDefinition = {
       pageType: 'landing',
       sections: {
         shared: {
-          headerFooterPageSlug: 'header-footer-kalitechnia',
+          headerFooterPageSlug: 'header-footer-kallitechnia',
         },
         hero: {
           headline: 'Η Γυμναστική είναι δύναμη, χαρά, δημιουργία.',
@@ -403,7 +403,7 @@ export const kalitechniaTemplate: TemplateDefinition = {
 // Template registry - add new templates here
 export const templates: Record<string, TemplateDefinition> = {
   ftiaxesite: ftiaxesiteTemplate,
-  kalitechnia: kalitechniaTemplate,
+  kallitechnia: kallitechniaTemplate,
   // Generated templates will be imported here
   // Example:
   // import { mitsosTemplate } from './generated/mitsos'

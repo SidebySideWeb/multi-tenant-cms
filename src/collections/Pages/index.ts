@@ -254,12 +254,12 @@ const getManualSections = (slug: unknown, siblingData: any) => {
     return siblingData?.ftiaxesiteSections
   }
 
-  if (slug === 'kalitechnia-homepage') {
-    return siblingData?.kalitechniaSections
+  if (slug === 'kallitechnia-homepage') {
+    return siblingData?.kallitechniaSections
   }
 
-  if (slug.startsWith('kalitechnia-') && slug !== 'header-footer-kalitechnia') {
-    return siblingData?.kalitechniaContentSections
+  if (slug.startsWith('kallitechnia-') && slug !== 'header-footer-kallitechnia') {
+    return siblingData?.kallitechniaContentSections
   }
 
   return undefined
@@ -272,8 +272,8 @@ const getManualSharedLayout = (slug: unknown, siblingData: any) => {
     return siblingData?.ftiaxesiteSharedLayout
   }
 
-  if (slug === 'header-footer-kalitechnia') {
-    return siblingData?.kalitechniaSharedLayout
+  if (slug === 'header-footer-kallitechnia') {
+    return siblingData?.kallitechniaSharedLayout
   }
 
   return undefined
@@ -283,8 +283,8 @@ const getDefaultHeaderFooterSlug = (slug?: string | null) => {
   if (!slug) {
     return 'header-footer-ftiaxesite'
   }
-  if (slug === 'kalitechnia-homepage') {
-    return 'header-footer-kalitechnia'
+  if (slug === 'kallitechnia-homepage') {
+    return 'header-footer-kallitechnia'
   }
   return 'header-footer-ftiaxesite'
 }
@@ -403,7 +403,7 @@ export const Pages: CollectionConfig = {
         description: 'Slug of the shared header/footer page used by this homepage.',
         condition: (data) => {
           const slug = data?.slug
-          return typeof slug === 'string' && (slug === 'ftiaxesite-homepage' || slug === 'kalitechnia-homepage')
+          return typeof slug === 'string' && (slug === 'ftiaxesite-homepage' || slug === 'kallitechnia-homepage')
         },
         placeholder: 'header-footer-ftiaxesite',
       },
@@ -709,11 +709,11 @@ export const Pages: CollectionConfig = {
       ],
     },
     {
-      name: 'kalitechniaSections',
+      name: 'kallitechniaSections',
       type: 'group',
       admin: {
-        description: 'Διαχειριστείτε τα περιεχόμενα της αρχικής σελίδας (Kalitechnia).',
-        condition: (data) => typeof data?.slug === 'string' && data.slug === 'kalitechnia-homepage',
+        description: 'Διαχειριστείτε τα περιεχόμενα της αρχικής σελίδας (Kallitechnia).',
+        condition: (data) => typeof data?.slug === 'string' && data.slug === 'kallitechnia-homepage',
       },
       hooks: {
         beforeValidate: [
@@ -1142,11 +1142,11 @@ export const Pages: CollectionConfig = {
       ],
     },
     {
-      name: 'kalitechniaSharedLayout',
+      name: 'kallitechniaSharedLayout',
       type: 'group',
       admin: {
-        description: 'Κοινό header/footer layout για την Kalitechnia.',
-        condition: (data) => typeof data?.slug === 'string' && data.slug === 'header-footer-kalitechnia',
+        description: 'Κοινό header/footer layout για την Kallitechnia.',
+        condition: (data) => typeof data?.slug === 'string' && data.slug === 'header-footer-kallitechnia',
       },
       hooks: {
         beforeValidate: [
@@ -1285,17 +1285,17 @@ export const Pages: CollectionConfig = {
       ],
     },
     {
-      name: 'kalitechniaContentSections',
+      name: 'kallitechniaContentSections',
       type: 'json',
       admin: {
-        description: 'Επεξεργασία ενοτήτων περιεχομένου για σελίδες της Kalitechnia βάσει του page type.',
+        description: 'Επεξεργασία ενοτήτων περιεχομένου για σελίδες της Kallitechnia βάσει του page type.',
         condition: (data) => {
           const slug = data?.slug
           return (
             typeof slug === 'string' &&
-            slug.startsWith('kalitechnia-') &&
-            slug !== 'kalitechnia-homepage' &&
-            slug !== 'header-footer-kalitechnia'
+            slug.startsWith('kallitechnia-') &&
+            slug !== 'kallitechnia-homepage' &&
+            slug !== 'header-footer-kallitechnia'
           )
         },
         components: {
@@ -1348,8 +1348,8 @@ export const Pages: CollectionConfig = {
               return siblingData?.ftiaxesiteSharedLayout ?? siblingData?.content ?? {}
             }
 
-            if (slug === 'header-footer-kalitechnia') {
-              return siblingData?.kalitechniaSharedLayout ?? siblingData?.content ?? {}
+            if (slug === 'header-footer-kallitechnia') {
+              return siblingData?.kallitechniaSharedLayout ?? siblingData?.content ?? {}
             }
 
             const sections = normalizeSections(

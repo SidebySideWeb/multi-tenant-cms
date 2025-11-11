@@ -14,7 +14,7 @@ const lexical = (text: string) => buildDefaultEditorState({ text })
 const toRichTextArray = (paragraphs: string[]) => paragraphs.map((content) => ({ content: lexical(content) }))
 
 const ensureTenant = async () => {
-  const tenantSlug = 'kalitechnia'
+const tenantSlug = 'kallitechnia'
 
   const existing = await payload.find({
     collection: 'tenants',
@@ -36,7 +36,7 @@ const ensureTenant = async () => {
       data: {
         name: 'Καλλιτεχνία',
         slug: tenantSlug,
-        domain: 'kalitechnia.gr',
+        domain: 'kallitechnia.gr',
         defaultLocale: 'el',
       },
       overrideAccess: true,
@@ -49,7 +49,7 @@ const ensureTenant = async () => {
     data: {
       name: 'Καλλιτεχνία',
       slug: tenantSlug,
-      domain: 'kalitechnia.gr',
+      domain: 'kallitechnia.gr',
       defaultLocale: 'el',
     },
     overrideAccess: true,
@@ -1000,7 +1000,7 @@ const getKalitechniaSeedData = () => {
 
   const headerFooterContent = {
     header: {
-      logo_text: 'kalitechnia.gr',
+      logo_text: 'kallitechnia.gr',
       logo_image: null,
       menu: [
         { label: 'Αρχική', link: '/' },
@@ -1027,7 +1027,7 @@ const getKalitechniaSeedData = () => {
         title: 'Επικοινωνία',
         address: 'Αργοστόλι, Κεφαλονιά',
         phone: '+30 26710 00000',
-        email: 'info@kalitechnia.gr',
+        email: 'info@kallitechnia.gr',
       },
       links: {
         title: 'Γρήγοροι Σύνδεσμοι',
@@ -1203,13 +1203,13 @@ const getKalitechniaSeedData = () => {
   const homepageContent = {
     sections: homepageSections,
     shared: {
-      headerFooterPageSlug: 'header-footer-kalitechnia',
+      headerFooterPageSlug: 'header-footer-kallitechnia',
     },
   }
 
   const aboutContent = {
     shared: {
-      headerFooterPageSlug: 'header-footer-kalitechnia',
+      headerFooterPageSlug: 'header-footer-kallitechnia',
     },
     sections: {
       hero: {
@@ -1295,7 +1295,7 @@ const getKalitechniaSeedData = () => {
 
   const programsContent = {
     shared: {
-      headerFooterPageSlug: 'header-footer-kalitechnia',
+      headerFooterPageSlug: 'header-footer-kallitechnia',
     },
     sections: {
       hero: {
@@ -1453,7 +1453,7 @@ const getKalitechniaSeedData = () => {
 
   const contactContent = {
     shared: {
-      headerFooterPageSlug: 'header-footer-kalitechnia',
+      headerFooterPageSlug: 'header-footer-kallitechnia',
     },
     sections: {
       hero: {
@@ -1505,7 +1505,7 @@ const getKalitechniaSeedData = () => {
 
   const registrationContent = {
     shared: {
-      headerFooterPageSlug: 'header-footer-kalitechnia',
+      headerFooterPageSlug: 'header-footer-kallitechnia',
     },
     sections: {
       hero: {
@@ -1586,7 +1586,7 @@ const getKalitechniaSeedData = () => {
 
   const mediaContent = {
     shared: {
-      headerFooterPageSlug: 'header-footer-kalitechnia',
+      headerFooterPageSlug: 'header-footer-kallitechnia',
     },
     sections: {
       hero: {
@@ -1646,7 +1646,7 @@ const getKalitechniaSeedData = () => {
 
   const newsPageContent = {
     shared: {
-      headerFooterPageSlug: 'header-footer-kalitechnia',
+      headerFooterPageSlug: 'header-footer-kallitechnia',
     },
     sections: {
       hero: {
@@ -1658,7 +1658,7 @@ const getKalitechniaSeedData = () => {
 
   const termsContent = {
     shared: {
-      headerFooterPageSlug: 'header-footer-kalitechnia',
+      headerFooterPageSlug: 'header-footer-kallitechnia',
     },
     heroTitle: 'Όροι Χρήσης',
     lastUpdated: 'Ιανουάριος 2025',
@@ -1780,66 +1780,66 @@ const getKalitechniaSeedData = () => {
   return {
     pageTypes: [
       {
-        slug: 'header-footer-kalitechnia',
-        name: 'Header & Footer (Kalitechnia)',
-        description: 'Shared header and footer content for Kalitechnia tenant.',
+        slug: 'header-footer-kallitechnia',
+        name: 'Header & Footer (Kallitechnia)',
+        description: 'Shared header and footer content for Kallitechnia tenant.',
         fields: headerFooterSchema,
       },
       {
-        slug: 'home-kalitechnia',
-        name: 'Kalitechnia Homepage',
-        description: 'Homepage content structure for the Kalitechnia template.',
+        slug: 'home-kallitechnia',
+        name: 'Kallitechnia Homepage',
+        description: 'Homepage content structure for the Kallitechnia template.',
         isDefault: true,
         fields: homepageSchema,
       },
       {
-        slug: 'about-kalitechnia',
-        name: 'Kalitechnia About',
-        description: 'About page structure for την Καλλιτεχνία.',
+        slug: 'about-kallitechnia',
+        name: 'Kallitechnia About',
+        description: 'About page structure για την Καλλιτεχνία.',
         fields: aboutSchema,
       },
       {
-        slug: 'programs-kalitechnia',
-        name: 'Kalitechnia Programs',
-        description: 'Programs listing for την Καλλιτεχνία.',
+        slug: 'programs-kallitechnia',
+        name: 'Kallitechnia Programs',
+        description: 'Programs listing για την Καλλιτεχνία.',
         fields: programsSchema,
       },
       {
-        slug: 'contact-kalitechnia',
-        name: 'Kalitechnia Contact',
+        slug: 'contact-kallitechnia',
+        name: 'Kallitechnia Contact',
         description: 'Επικοινωνία και στοιχεία συλλόγου.',
         fields: contactSchema,
       },
       {
-        slug: 'registration-kalitechnia',
-        name: 'Kalitechnia Registration',
+        slug: 'registration-kallitechnia',
+        name: 'Kallitechnia Registration',
         description: 'Σελίδα εγγραφών και απαιτούμενα δικαιολογητικά.',
         fields: registrationSchema,
       },
       {
-        slug: 'media-kalitechnia',
-        name: 'Kalitechnia Media',
+        slug: 'media-kallitechnia',
+        name: 'Kallitechnia Media',
         description: 'Media kit, φωτογραφίες και banners.',
         fields: mediaSchema,
       },
       {
-        slug: 'news-kalitechnia',
-        name: 'Kalitechnia News Listing',
+        slug: 'news-kallitechnia',
+        name: 'Kallitechnia News Listing',
         description: 'Λίστα δημοσιεύσεων και ανακοινώσεων.',
         fields: newsSchema,
       },
       {
-        slug: 'terms-kalitechnia',
-        name: 'Kalitechnia Terms',
+        slug: 'terms-kallitechnia',
+        name: 'Kallitechnia Terms',
         description: 'Όροι χρήσης και πολιτικές.',
         fields: termsSchema,
       },
     ],
     pages: [
       {
-        slug: 'header-footer-kalitechnia',
-        title: 'Header & Footer (Kalitechnia)',
-        pageTypeSlug: 'header-footer-kalitechnia',
+        slug: 'header-footer-kallitechnia',
+        title: 'Header & Footer (Kallitechnia)',
+        pageTypeSlug: 'header-footer-kallitechnia',
         content: headerFooterContent,
         seo: {
           title: 'Καλλιτεχνία – Header & Footer',
@@ -1847,9 +1847,9 @@ const getKalitechniaSeedData = () => {
         },
       },
       {
-        slug: 'kalitechnia-homepage',
+        slug: 'kallitechnia-homepage',
         title: 'Καλλιτεχνία – Αρχική',
-        pageTypeSlug: 'home-kalitechnia',
+        pageTypeSlug: 'home-kallitechnia',
         summary: lexical('Ανακαλύψτε τη μαγεία της γυμναστικής στον σύλλογό μας.'),
         content: homepageContent,
         seo: {
@@ -1858,9 +1858,9 @@ const getKalitechniaSeedData = () => {
         },
       },
       {
-        slug: 'kalitechnia-about',
+        slug: 'kallitechnia-about',
         title: 'Καλλιτεχνία – Ο Σύλλογος',
-        pageTypeSlug: 'about-kalitechnia',
+        pageTypeSlug: 'about-kallitechnia',
         content: aboutContent,
         seo: {
           title: 'Καλλιτεχνία – Ο Σύλλογος',
@@ -1868,9 +1868,9 @@ const getKalitechniaSeedData = () => {
         },
       },
       {
-        slug: 'kalitechnia-programs',
+        slug: 'kallitechnia-programs',
         title: 'Καλλιτεχνία – Τμήματα',
-        pageTypeSlug: 'programs-kalitechnia',
+        pageTypeSlug: 'programs-kallitechnia',
         content: programsContent,
         seo: {
           title: 'Καλλιτεχνία – Τα Τμήματά μας',
@@ -1878,9 +1878,9 @@ const getKalitechniaSeedData = () => {
         },
       },
       {
-        slug: 'kalitechnia-contact',
+        slug: 'kallitechnia-contact',
         title: 'Καλλιτεχνία – Επικοινωνία',
-        pageTypeSlug: 'contact-kalitechnia',
+        pageTypeSlug: 'contact-kallitechnia',
         content: contactContent,
         seo: {
           title: 'Καλλιτεχνία – Επικοινωνία',
@@ -1888,9 +1888,9 @@ const getKalitechniaSeedData = () => {
         },
       },
       {
-        slug: 'kalitechnia-registration',
+        slug: 'kallitechnia-registration',
         title: 'Καλλιτεχνία – Εγγραφές',
-        pageTypeSlug: 'registration-kalitechnia',
+        pageTypeSlug: 'registration-kallitechnia',
         content: registrationContent,
         seo: {
           title: 'Καλλιτεχνία – Εγγραφές',
@@ -1898,9 +1898,9 @@ const getKalitechniaSeedData = () => {
         },
       },
       {
-        slug: 'kalitechnia-media',
+        slug: 'kallitechnia-media',
         title: 'Καλλιτεχνία – Media',
-        pageTypeSlug: 'media-kalitechnia',
+        pageTypeSlug: 'media-kallitechnia',
         content: mediaContent,
         seo: {
           title: 'Καλλιτεχνία – Media Kit',
@@ -1908,9 +1908,9 @@ const getKalitechniaSeedData = () => {
         },
       },
       {
-        slug: 'kalitechnia-news',
+        slug: 'kallitechnia-news',
         title: 'Καλλιτεχνία – Νέα',
-        pageTypeSlug: 'news-kalitechnia',
+        pageTypeSlug: 'news-kallitechnia',
         content: newsPageContent,
         seo: {
           title: 'Καλλιτεχνία – Νέα & Ανακοινώσεις',
@@ -1918,9 +1918,9 @@ const getKalitechniaSeedData = () => {
         },
       },
       {
-        slug: 'kalitechnia-terms',
+        slug: 'kallitechnia-terms',
         title: 'Καλλιτεχνία – Όροι Χρήσης',
-        pageTypeSlug: 'terms-kalitechnia',
+        pageTypeSlug: 'terms-kallitechnia',
         content: termsContent,
         seo: {
           title: 'Καλλιτεχνία – Όροι Χρήσης',

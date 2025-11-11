@@ -4,8 +4,8 @@ import payload from 'payload'
 
 import config from '../src/payload.config'
 
-const tenantSlug = process.argv[2] ?? 'kalitechnia'
-const pageTypeSlug = process.argv[3] ?? 'kalitechnia-programs'
+const tenantSlug = process.argv[2] ?? 'kallitechnia'
+const pageTypeSlug = process.argv[3] ?? 'kallitechnia-programs'
 
 async function run() {
   await payload.init({
