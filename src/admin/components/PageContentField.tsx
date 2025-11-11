@@ -125,8 +125,18 @@ const normalizeRelationshipValue = (value: RelationshipValue | unknown): string 
   }
 
   if (typeof value === 'object') {
-    if (value.value !== undefined && value.value !== null) return value.value
-    if (value.id !== undefined && value.id !== null) return value.id
+    const record = value as Record<string, unknown>
+
+    if (record.value !== undefined && record.value !== null) {
+      return normalizeRelationshipValue(record.value as RelationshipValue)
+    }
+
+    if (record.id !== undefined && record.id !== null) {
+      const id = record.id
+      if (typeof id === 'string' || typeof id === 'number') {
+        return id
+      }
+    }
   }
 
   return value as string | number
