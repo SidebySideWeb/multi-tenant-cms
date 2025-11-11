@@ -1244,8 +1244,7 @@ const getKalitechniaSeedData = () => {
           paragraphs: toRichTextArray([
             'Η Γυμναστική Καλλιτεχνία Κεφαλονιάς ιδρύθηκε από μια ομάδα ανθρώπων με κοινό γνώρισμά τους την αγάπη τους για τα παιδιά. Όραμά τους είναι να προσφέρουν στα παιδιά της Κεφαλονιάς την ευκαιρία να ασχοληθούν με τη Γυμναστική, καλλιεργώντας το σώμα και τη ψυχή τους με σεβασμό και αγάπη.',
           ]),
-          image:
-            'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/4E61F67B-0337-4478-8A77-8114550D1239%20%281%29-hJCE20zQfhEIr0Zo1h6Mk1Zl1U47lS.jpeg',
+          image: null,
           imagePosition: 'left',
         },
         {
@@ -1255,7 +1254,7 @@ const getKalitechniaSeedData = () => {
             'Επιδιώκουμε να αναπτύξουμε τις σωματικές και ψυχικές ικανότητες των αθλητών μας, καλλιεργώντας παράλληλα αξίες όπως η ομαδικότητα, ο σεβασμός, η επιμονή και η πειθαρχία.',
             'Στόχος μας είναι να δημιουργήσουμε ένα ασφαλές και υποστηρικτικό περιβάλλον όπου κάθε αθλητής μπορεί να εξελιχθεί στο μέγιστο των δυνατοτήτων του, είτε επιδιώκει την αθλητική του εξέλιξη είτε απλά την προσωπική του ανάπτυξη μέσω του αθλήματος.',
           ]),
-          image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_6064-dtKNW2y3nWi4kjmvriBpP8rrQpz5wE.jpeg',
+          image: null,
           imagePosition: 'right',
         },
         {
@@ -1265,7 +1264,7 @@ const getKalitechniaSeedData = () => {
             'Η φιλοσοφία μας βασίζεται στην ισορροπία μεταξύ της αγωνιστικής αριστείας και της προσωπικής ανάπτυξης. Κάθε αθλητής είναι μοναδικός και αξίζει εξατομικευμένη προσοχή και καθοδήγηση.',
             'Προάγουμε ένα περιβάλλον θετικής ενέργειας, όπου τα λάθη είναι ευκαιρίες μάθησης, οι προκλήσεις είναι ευκαιρίες ανάπτυξης και κάθε επιτυχία, μικρή ή μεγάλη, γιορτάζεται με ενθουσιασμό. Η χαρά της γυμναστικής είναι στο ταξίδι, όχι μόνο στον προορισμό.',
           ]),
-          image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_6320-Pb93nEudabKTDpdQwN5hOwhW0tlBou.jpeg',
+          image: null,
           imagePosition: 'left',
         },
       ],
@@ -1274,19 +1273,19 @@ const getKalitechniaSeedData = () => {
         items: [
           {
             title: 'Χώρος προπόνησης 1',
-            image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_6323-LZ8D1nFb8q5atienRmdoRw14ABglt6.jpeg',
+            image: null,
           },
           {
             title: 'Χώρος προπόνησης 2',
-            image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_6064-TbMx7N5nQbbsMsgmstilBpaJCGT83X.jpeg',
+            image: null,
           },
           {
             title: 'Χώρος προπόνησης 3',
-            image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_6068%20%281%29-Vk2nWKd2qSVzRl2ldqmb919zO5TCf9.jpeg',
+            image: null,
           },
           {
             title: 'Χώρος προπόνησης 4',
-            image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_6340%20%281%29-6T0A1KQPyDVi8Gr7ev3c5o4qGRiEuW.jpeg',
+            image: null,
           },
         ],
       },
@@ -1309,7 +1308,7 @@ const getKalitechniaSeedData = () => {
             description: lexical(
               'Η καλλιτεχνική γυμναστική είναι ένα ολοκληρωμένο άθλημα που αναπτύσσει δύναμη, ευλυγισία, ισορροπία και συντονισμό. Οι αθλητές μας εκπαιδεύονται σε όλα τα όργανα (δοκός, παράλληλες, έδαφος, ίππος) με έμφαση στην τεχνική και την ασφάλεια. Το πρόγραμμα προσαρμόζεται στις ανάγκες κάθε αθλητή, από αρχάριους έως προχωρημένους.',
             ),
-            image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_6341-lYd2EHQV08gx6DxJdWhs3MXKIhJs8l.jpeg',
+            image: null,
             imagePosition: 'left',
             schedule: [
               { day: 'Δευτέρα', time: '17:00 - 19:00', level: 'Αρχάριοι' },
@@ -1332,8 +1331,7 @@ const getKalitechniaSeedData = () => {
             description: lexical(
               'Η ρυθμική γυμναστική συνδυάζει τη χάρη του χορού με την αθλητική τεχνική. Οι αθλήτριές μας εκπαιδεύονται με όργανα (σχοινί, στεφάνι, μπάλα, κορδέλα, κλαβ) αναπτύσσοντας μουσικότητα, έκφραση και καλλιτεχνική ερμηνεία. Το πρόγραμμα περιλαμβάνει χορογραφίες και συμμετοχή σε επιδείξεις.',
             ),
-            image:
-              'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/4E61F67B-0337-4478-8A77-8114550D1239%20%281%29-hJCE20zQfhEIr0Zo1h6Mk1Zl1U47lS.jpeg',
+            image: null,
             imagePosition: 'right',
             schedule: [
               { day: 'Δευτέρα', time: '16:00 - 18:00', level: 'Αρχάριοι' },
@@ -1356,7 +1354,7 @@ const getKalitechniaSeedData = () => {
             description: lexical(
               'Τα προαγωνιστικά τμήματα απευθύνονται σε αθλητές που επιθυμούν να συμμετέχουν σε αγώνες και να αναπτύξουν τις δεξιότητές τους σε ανταγωνιστικό επίπεδο. Το πρόγραμμα περιλαμβάνει εντατική προπόνηση, φυσική κατάσταση, τεχνική καθοδήγηση και ψυχολογική υποστήριξη για την επίτευξη των στόχων.',
             ),
-            image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_6320-Pb93nEudabKTDpdQwN5hOwhW0tlBou.jpeg',
+            image: null,
             imagePosition: 'left',
             schedule: [
               { day: 'Δευτέρα', time: '18:00 - 20:30', level: "Προαγωνιστικό Α'" },
@@ -1380,7 +1378,7 @@ const getKalitechniaSeedData = () => {
             description: lexical(
               'Τα παιδικά τμήματα προσφέρουν μια διασκεδαστική και ασφαλή εισαγωγή στον κόσμο της γυμναστικής για παιδιά ηλικίας 3-7 ετών. Μέσα από παιχνίδι και δημιουργικές δραστηριότητες, τα παιδιά αναπτύσσουν βασικές κινητικές δεξιότητες, ισορροπία, συντονισμό και κοινωνικές ικανότητες σε ένα χαρούμενο περιβάλλον.',
             ),
-            image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_6323-LZ8D1nFb8q5atienRmdoRw14ABglt6.jpeg',
+            image: null,
             imagePosition: 'right',
             schedule: [
               { day: 'Δευτέρα', time: '16:00 - 17:00', level: '3-4 ετών' },
@@ -1403,7 +1401,7 @@ const getKalitechniaSeedData = () => {
             description: lexical(
               'Πόσοι από εσάς γνωρίζετε το συγκεκριμένο άθλημα; Πολλοί και ιδίως τα μικρά παιδιά το μπερδεύουν με τη ρυθμική ή την ενόργανη. Η Γυμναστική για Όλους (ΓγΟ) αποτελεί ένα από τα βασικά αθλήματα της Ομοσπονδίας Γυμναστικής και απευθύνεται σε άτομα κάθε ηλικίας και επιπέδου φυσικής κατάστασης. Είναι ένα ομαδικό άθλημα χωρίς αγωνιστικούς περιορισμούς, που δίνει έμφαση στη συμμετοχή, στη χαρά της κίνησης και στη συνεργασία μέσα σε ομάδες.',
             ),
-            image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_6064-TbMx7N5nQbbsMsgmstilBpaJCGT83X.jpeg',
+            image: null,
             imagePosition: 'left',
             additionalInfo: lexical(
               'Η ΓγΟ περιλαμβάνει στοιχεία ρυθμικής γυμναστικής, ενόργανης, ακροβατικής, αεροβικής και χορού. Οι ομάδες συμμετέχουν σε διάφορα Φεστιβάλ Γυμναστικής καθώς και σε Παγκόσμιες και Ευρωπαϊκές Γυμναστράδες. Επίσης, μπορούν να συμμετέχουν και σε Φεστιβάλ με διαγωνιστικό χαρακτήρα, τα λεγόμενα Contest καθώς και στις διοργανώσεις World ή European Gym for life Challenge.',
@@ -1427,7 +1425,7 @@ const getKalitechniaSeedData = () => {
             description: lexical(
               'Το τμήμα ενηλίκων Γυμναστικής για όλους (ΓγΟ) του συλλόγου μας αποσκοπεί στην εκγύμναση των αθλουμένων (ασκήσεις ενδυνάμωσης, αντοχής, ευλυγισίας, ισορροπίας), στην ψυχική ευεξία, στην έκφρασή τους μέσω της κίνησης και της μουσικής, στη δημιουργία μιας ομάδας που θα συμμετάσχει σε Φεστιβάλ Γυμναστικής με πρόγραμμα γυμναστικής-χορογραφική σύνθεση, στη χαρά της συμμετοχής, στη δημιουργία όμορφων εμπειριών.',
             ),
-            image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_6321-EPivdvbOD9wX1IPMd2dA4e3aZlVtiE.jpeg',
+            image: null,
             imagePosition: 'right',
             additionalInfo: lexical(
               'Στη Γυμναστική για όλους με τον όρο «χορογραφική σύνθεση» εννοούμε τη δημιουργία ομαδικού γυμναστικού προγράμματος που περιέχει στοιχεία ενόργανης, ρυθμικής, ακροβατικής, αεροβικής συνδεδεμένα με χορευτικά στοιχεία. Τα στοιχεία που επιλέγονται είναι ανάλογα με το επίπεδο και την ηλικία των αθλουμένων. Οι προπονήσεις έχουν στόχο να ενώσουν την τέχνη της κίνησης με τη χαρά της συμμετοχής.',
@@ -1617,7 +1615,7 @@ const getKalitechniaSeedData = () => {
         },
         {
           title: 'Συγχρονισμένες Κινήσεις',
-          image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_6341-lYd2EHQV08gx6DxJdWhs3MXKIhJs8l.jpeg',
+          image: null,
         },
         {
           title: 'Παράσταση με Φώτα',
@@ -1724,7 +1722,7 @@ const getKalitechniaSeedData = () => {
           'Ευχαριστούμε θερμά όλους τους γονείς και τους υποστηρικτές μας που μας συνοδεύουν σε αυτό το ταξίδι. Η υποστήριξή σας είναι ανεκτίμητη!',
         ].join('\n\n'),
       ),
-      heroImage: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_6341-lYd2EHQV08gx6DxJdWhs3MXKIhJs8l.jpeg',
+      heroImage: null,
       authorName: 'Ελένη Δαρδαμάνη',
       publishedAt: '2024-03-15T09:00:00.000Z',
       status: 'published' as const,
