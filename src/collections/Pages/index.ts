@@ -114,6 +114,46 @@ const normalizeProcessSteps = (steps: unknown) => {
   })
 }
 
+const normalizeParagraphEntries = (paragraphs: unknown) => {
+  if (!Array.isArray(paragraphs)) return paragraphs
+
+  return paragraphs
+    .map((entry) => {
+      if (!entry) return entry
+      if (typeof entry === 'string') {
+        return {
+          content: ensureLexicalState(entry),
+        }
+      }
+      if (typeof entry === 'object') {
+        const record = entry as Record<string, unknown>
+        const content =
+          record.content ?? record.text ?? record.value ?? (Array.isArray(record.children) ? record : '')
+        return {
+          ...record,
+          content: ensureLexicalState(content),
+        }
+      }
+
+      return entry
+    })
+    .filter((entry) => entry !== null && entry !== undefined)
+}
+
+const normalizeRichTextFieldOnItems = (items: unknown, fieldName: string) => {
+  if (!Array.isArray(items)) return items
+
+  return items.map((item) => {
+    if (!item || typeof item !== 'object') return item
+    const record = item as Record<string, unknown>
+    const fieldValue = record[fieldName]
+    return {
+      ...record,
+      [fieldName]: ensureLexicalState(fieldValue),
+    }
+  })
+}
+
 const normalizeSections = (sections: unknown) => {
   if (!sections || typeof sections !== 'object') return sections
 
@@ -136,12 +176,47 @@ const normalizeSections = (sections: unknown) => {
     }
   }
 
+  if (input.welcome && typeof input.welcome === 'object') {
+    const welcome = input.welcome as Record<string, any>
+    result.welcome = {
+      ...welcome,
+      paragraphs: normalizeParagraphEntries(welcome.paragraphs),
+    }
+  }
+
   if (input.process && typeof input.process === 'object') {
     const process = input.process as Record<string, any>
     result.process = {
       ...process,
       subtitle: ensureLexicalState(process.subtitle),
       steps: normalizeProcessSteps(process.steps),
+    }
+  }
+
+  if (input.programs && typeof input.programs === 'object') {
+    const programs = input.programs as Record<string, any>
+    result.programs = {
+      ...programs,
+      subtitle: ensureLexicalState(programs.subtitle),
+      items: normalizeRichTextFieldOnItems(programs.items, 'description'),
+    }
+  }
+
+  if (input.gallery && typeof input.gallery === 'object') {
+    const gallery = input.gallery as Record<string, any>
+    result.gallery = {
+      ...gallery,
+      subtitle: ensureLexicalState(gallery.subtitle),
+      items: normalizeRichTextFieldOnItems(gallery.items, 'caption'),
+    }
+  }
+
+  if (input.news && typeof input.news === 'object') {
+    const news = input.news as Record<string, any>
+    result.news = {
+      ...news,
+      subtitle: ensureLexicalState(news.subtitle),
+      items: normalizeRichTextFieldOnItems(news.items, 'summary'),
     }
   }
 
@@ -153,7 +228,51 @@ const normalizeSections = (sections: unknown) => {
     }
   }
 
+  if (input.cta && typeof input.cta === 'object') {
+    const cta = input.cta as Record<string, any>
+    result.cta = {
+      ...cta,
+      subtitle: ensureLexicalState(cta.subtitle),
+    }
+  }
+
+  if (input.ctaBanner && typeof input.ctaBanner === 'object') {
+    const ctaBanner = input.ctaBanner as Record<string, any>
+    result.ctaBanner = {
+      ...ctaBanner,
+      subtitle: ensureLexicalState(ctaBanner.subtitle),
+    }
+  }
+
   return result
+}
+
+const getManualSections = (slug: unknown, siblingData: any) => {
+  if (typeof slug !== 'string') return undefined
+
+  if (slug === 'ftiaxesite-homepage') {
+    return siblingData?.ftiaxesiteSections
+  }
+
+  if (slug === 'kalitechnia-homepage') {
+    return siblingData?.kalitechniaSections
+  }
+
+  return undefined
+}
+
+const getManualSharedLayout = (slug: unknown, siblingData: any) => {
+  if (typeof slug !== 'string') return undefined
+
+  if (slug === 'header-footer-ftiaxesite') {
+    return siblingData?.ftiaxesiteSharedLayout
+  }
+
+  if (slug === 'header-footer-kalitechnia') {
+    return siblingData?.kalitechniaSharedLayout
+  }
+
+  return undefined
 }
 
 const getDefaultHeaderFooterSlug = (slug?: string | null) => {
@@ -300,10 +419,10 @@ export const Pages: CollectionConfig = {
       },
     },
     {
-      name: 'sections',
+      name: 'ftiaxesiteSections',
       type: 'group',
       admin: {
-        description: 'Διαχειριστείτε τα περιεχόμενα των ενοτήτων της σελίδας.',
+        description: 'Διαχειριστείτε τα περιεχόμενα των ενοτήτων της σελίδας (ftiaxesite).',
         condition: (data) => {
           const slug = data?.slug
           if (typeof slug === 'string' && slug === 'ftiaxesite-homepage') {
@@ -586,13 +705,283 @@ export const Pages: CollectionConfig = {
       ],
     },
     {
-      name: 'sharedLayout',
+      name: 'kalitechniaSections',
       type: 'group',
       admin: {
-        description: 'Κοινό header/footer για όλες τις σελίδες του tenant.',
+        description: 'Διαχειριστείτε τα περιεχόμενα της αρχικής σελίδας (Kalitechnia).',
+        condition: (data) => typeof data?.slug === 'string' && data.slug === 'kalitechnia-homepage',
+      },
+      hooks: {
+        beforeValidate: [
+          ({ value, siblingData }) => {
+            if (value && typeof value === 'object' && Object.keys(value).length > 0) {
+              return normalizeSections(value)
+            }
+            const sections = siblingData?.content?.sections
+            if (sections && typeof sections === 'object') {
+              return normalizeSections(sections)
+            }
+            return normalizeSections(value)
+          },
+        ],
+        afterRead: [
+          ({ value, siblingData }) => {
+            if (value && typeof value === 'object' && Object.keys(value).length > 0) {
+              return normalizeSections(value)
+            }
+            const sections = siblingData?.content?.sections
+            if (sections && typeof sections === 'object') {
+              return normalizeSections(sections)
+            }
+            return normalizeSections(value)
+          },
+        ],
+      },
+      fields: [
+        {
+          name: 'hero',
+          type: 'group',
+          admin: {
+            description: 'Hero section της αρχικής σελίδας.',
+          },
+          fields: [
+            { name: 'headline', type: 'text' },
+            {
+              name: 'subheadline',
+              type: 'richText',
+              hooks: {
+                beforeValidate: [({ value }) => ensureLexicalState(value)],
+                afterRead: [({ value }) => ensureLexicalState(value)],
+              },
+            },
+            { name: 'ctaLabel', type: 'text', admin: { placeholder: 'Δες τα Τμήματά μας' } },
+            { name: 'ctaHref', type: 'text', admin: { placeholder: '/programs' } },
+            {
+              name: 'backgroundImage',
+              type: 'upload',
+              relationTo: 'media',
+              admin: {
+                description: 'Ανεβάστε ή επιλέξτε την εικόνα φόντου του hero.',
+              },
+            },
+          ],
+        },
+        {
+          name: 'welcome',
+          type: 'group',
+          admin: {
+            description: 'Ενότητα καλωσορίσματος.',
+          },
+          fields: [
+            { name: 'title', type: 'text' },
+            {
+              name: 'paragraphs',
+              type: 'array',
+              admin: {
+                description: 'Παράγραφοι κειμένου.',
+              },
+              fields: [
+                {
+                  name: 'content',
+                  type: 'richText',
+                  hooks: {
+                    beforeValidate: [({ value }) => ensureLexicalState(value)],
+                    afterRead: [({ value }) => ensureLexicalState(value)],
+                  },
+                },
+              ],
+            },
+            {
+              name: 'image',
+              type: 'upload',
+              relationTo: 'media',
+              admin: {
+                description: 'Ανεβάστε ή επιλέξτε εικόνα για την ενότητα καλωσορίσματος.',
+              },
+            },
+          ],
+        },
+        {
+          name: 'programs',
+          type: 'group',
+          admin: {
+            description: 'Ενότητα προγραμμάτων.',
+          },
+          fields: [
+            { name: 'title', type: 'text' },
+            {
+              name: 'subtitle',
+              type: 'richText',
+              hooks: {
+                beforeValidate: [({ value }) => ensureLexicalState(value)],
+                afterRead: [({ value }) => ensureLexicalState(value)],
+              },
+            },
+            {
+              name: 'items',
+              type: 'array',
+              fields: [
+                { name: 'title', type: 'text' },
+                {
+                  name: 'description',
+                  type: 'richText',
+                  hooks: {
+                    beforeValidate: [({ value }) => ensureLexicalState(value)],
+                    afterRead: [({ value }) => ensureLexicalState(value)],
+                  },
+                },
+                {
+                  name: 'image',
+                  type: 'upload',
+                  relationTo: 'media',
+                  admin: {
+                    description: 'Ανεβάστε ή επιλέξτε εικόνα για την κάρτα προγράμματος.',
+                  },
+                },
+                { name: 'linkLabel', type: 'text', admin: { placeholder: 'Μάθετε Περισσότερα' } },
+                { name: 'linkHref', type: 'text', admin: { placeholder: '/programs#anchor' } },
+                { name: 'anchor', type: 'text', admin: { description: 'Anchor ID για το πρόγραμμα.' } },
+              ],
+            },
+          ],
+        },
+        {
+          name: 'gallery',
+          type: 'group',
+          admin: {
+            description: 'Συλλογή φωτογραφιών.',
+          },
+          fields: [
+            { name: 'title', type: 'text' },
+            {
+              name: 'subtitle',
+              type: 'richText',
+              hooks: {
+                beforeValidate: [({ value }) => ensureLexicalState(value)],
+                afterRead: [({ value }) => ensureLexicalState(value)],
+              },
+            },
+            {
+              name: 'items',
+              type: 'array',
+              fields: [
+                { name: 'title', type: 'text' },
+                {
+                  name: 'caption',
+                  type: 'richText',
+                  hooks: {
+                    beforeValidate: [({ value }) => ensureLexicalState(value)],
+                    afterRead: [({ value }) => ensureLexicalState(value)],
+                  },
+                },
+                {
+                  name: 'image',
+                  type: 'upload',
+                  relationTo: 'media',
+                  admin: {
+                    description: 'Ανεβάστε ή επιλέξτε εικόνα για τη συλλογή.',
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        {
+          name: 'news',
+          type: 'group',
+          admin: {
+            description: 'Ενότητα ειδήσεων.',
+          },
+          fields: [
+            { name: 'title', type: 'text' },
+            {
+              name: 'subtitle',
+              type: 'richText',
+              hooks: {
+                beforeValidate: [({ value }) => ensureLexicalState(value)],
+                afterRead: [({ value }) => ensureLexicalState(value)],
+              },
+            },
+            {
+              name: 'items',
+              type: 'array',
+              fields: [
+                { name: 'title', type: 'text' },
+                {
+                  name: 'summary',
+                  type: 'richText',
+                  hooks: {
+                    beforeValidate: [({ value }) => ensureLexicalState(value)],
+                    afterRead: [({ value }) => ensureLexicalState(value)],
+                  },
+                },
+                { name: 'date', type: 'text' },
+                { name: 'href', type: 'text', admin: { description: 'URL άρθρου.' } },
+                {
+                  name: 'image',
+                  type: 'upload',
+                  relationTo: 'media',
+                  admin: {
+                    description: 'Ανεβάστε ή επιλέξτε εικόνα για το νέο.',
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        {
+          name: 'sponsors',
+          type: 'group',
+          admin: {
+            description: 'Υποστηρικτές.',
+          },
+          fields: [
+            { name: 'title', type: 'text' },
+            {
+              name: 'subtitle',
+              type: 'richText',
+              hooks: {
+                beforeValidate: [({ value }) => ensureLexicalState(value)],
+                afterRead: [({ value }) => ensureLexicalState(value)],
+              },
+            },
+            {
+              name: 'items',
+              type: 'array',
+              fields: [{ name: 'name', type: 'text' }],
+            },
+          ],
+        },
+        {
+          name: 'cta',
+          type: 'group',
+          admin: {
+            description: 'Ενότητα Call To Action.',
+          },
+          fields: [
+            { name: 'title', type: 'text' },
+            {
+              name: 'subtitle',
+              type: 'richText',
+              hooks: {
+                beforeValidate: [({ value }) => ensureLexicalState(value)],
+                afterRead: [({ value }) => ensureLexicalState(value)],
+              },
+            },
+            { name: 'buttonLabel', type: 'text' },
+            { name: 'buttonHref', type: 'text' },
+          ],
+        },
+      ],
+    },
+    {
+      name: 'ftiaxesiteSharedLayout',
+      type: 'group',
+      admin: {
+        description: 'Κοινό header/footer layout για το ftiaxesite.',
         condition: (data) => {
           const slug = data?.slug
-          if (typeof slug === 'string' && (slug === 'header-footer-ftiaxesite' || slug === 'header-footer-kalitechnia')) {
+          if (typeof slug === 'string' && slug === 'header-footer-ftiaxesite') {
             return true
           }
           return false
@@ -749,6 +1138,149 @@ export const Pages: CollectionConfig = {
       ],
     },
     {
+      name: 'kalitechniaSharedLayout',
+      type: 'group',
+      admin: {
+        description: 'Κοινό header/footer layout για την Kalitechnia.',
+        condition: (data) => typeof data?.slug === 'string' && data.slug === 'header-footer-kalitechnia',
+      },
+      hooks: {
+        beforeValidate: [
+          ({ value, siblingData }) => {
+            if (value && typeof value === 'object' && Object.keys(value).length > 0) {
+              return value
+            }
+            const layout = siblingData?.content?.shared?.layout ?? siblingData?.content
+            if (layout && typeof layout === 'object') {
+              return layout
+            }
+            return value
+          },
+        ],
+        afterRead: [
+          ({ value, siblingData }) => {
+            if (value && typeof value === 'object' && Object.keys(value).length > 0) {
+              return value
+            }
+            const layout = siblingData?.content?.shared?.layout ?? siblingData?.content
+            if (layout && typeof layout === 'object') {
+              return layout
+            }
+            return value
+          },
+        ],
+      },
+      fields: [
+        {
+          name: 'header',
+          type: 'group',
+          admin: { description: 'Ρυθμίσεις κεφαλίδας.' },
+          fields: [
+            { name: 'logo_text', type: 'text' },
+            {
+              name: 'logo_image',
+              type: 'upload',
+              relationTo: 'media',
+              admin: {
+                description: 'Ανεβάστε ή επιλέξτε το λογότυπο.',
+              },
+            },
+            {
+              name: 'menu',
+              type: 'array',
+              fields: [
+                { name: 'label', type: 'text', required: true },
+                { name: 'link', type: 'text', required: true },
+              ],
+            },
+            {
+              name: 'cta',
+              type: 'group',
+              fields: [
+                { name: 'label', type: 'text' },
+                { name: 'link', type: 'text' },
+              ],
+            },
+          ],
+        },
+        {
+          name: 'footer',
+          type: 'group',
+          admin: { description: 'Ρυθμίσεις υποσέλιδου.' },
+          fields: [
+            {
+              name: 'brand',
+              type: 'group',
+              fields: [
+                { name: 'name', type: 'text' },
+                { name: 'tagline', type: 'text' },
+                { name: 'description', type: 'text' },
+                {
+                  name: 'logo_image',
+                  type: 'upload',
+                  relationTo: 'media',
+                  admin: {
+                    description: 'Ανεβάστε ή επιλέξτε το λογότυπο.',
+                  },
+                },
+              ],
+            },
+            {
+              name: 'contact',
+              type: 'group',
+              fields: [
+                { name: 'title', type: 'text' },
+                { name: 'address', type: 'text' },
+                { name: 'phone', type: 'text' },
+                { name: 'email', type: 'email' },
+              ],
+            },
+            {
+              name: 'links',
+              type: 'group',
+              fields: [
+                { name: 'title', type: 'text' },
+                {
+                  name: 'items',
+                  type: 'array',
+                  fields: [
+                    { name: 'label', type: 'text', required: true },
+                    { name: 'href', type: 'text', required: true },
+                  ],
+                },
+              ],
+            },
+            {
+              name: 'socials',
+              type: 'array',
+              fields: [
+                { name: 'label', type: 'text', required: true },
+                { name: 'icon', type: 'text' },
+                { name: 'href', type: 'text', required: true },
+              ],
+            },
+            {
+              name: 'externalLinks',
+              type: 'array',
+              fields: [
+                { name: 'label', type: 'text', required: true },
+                { name: 'href', type: 'text', required: true },
+              ],
+            },
+            {
+              name: 'legalLinks',
+              type: 'array',
+              fields: [
+                { name: 'label', type: 'text', required: true },
+                { name: 'href', type: 'text', required: true },
+              ],
+            },
+            { name: 'copyright', type: 'text' },
+          ],
+        },
+      ],
+    },
+    {
       name: 'content',
       type: 'json',
       admin: {
@@ -764,18 +1296,23 @@ export const Pages: CollectionConfig = {
             const slug = siblingData?.slug
 
             if (slug === 'header-footer-ftiaxesite') {
-              return siblingData?.sharedLayout ?? siblingData?.content ?? {}
+              return siblingData?.ftiaxesiteSharedLayout ?? siblingData?.content ?? {}
+            }
+
+            if (slug === 'header-footer-kalitechnia') {
+              return siblingData?.kalitechniaSharedLayout ?? siblingData?.content ?? {}
             }
 
             const sections = normalizeSections(
-              siblingData?.sections ?? siblingData?.content?.sections ?? {},
+              getManualSections(slug, siblingData) ?? siblingData?.content?.sections ?? {},
             )
             const headerFooterSlug =
               siblingData?.headerFooterPageSlug ??
               siblingData?.content?.shared?.headerFooterPageSlug ??
               getDefaultHeaderFooterSlug(siblingData?.slug)
 
-            const sharedLayout = siblingData?.sharedLayout ?? siblingData?.content?.shared?.layout ?? {}
+            const sharedLayout =
+              getManualSharedLayout(slug, siblingData) ?? siblingData?.content?.shared?.layout ?? {}
 
             const result: Record<string, any> = {
               sections,

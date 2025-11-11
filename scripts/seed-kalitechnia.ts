@@ -1001,8 +1001,7 @@ const getKalitechniaSeedData = () => {
   const headerFooterContent = {
     header: {
       logo_text: 'kalitechnia.gr',
-      logo_image:
-        'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Logo%20KGK%20%CF%85%CF%88%CE%B7%CE%BB%CE%AE%CF%82%20%CE%B1%CE%BD%CE%AC%CE%BB%CF%85%CF%83%CE%B7%CF%82-YP2dWdAD9HKxgCBQOBLccXnxTydRcQ.png',
+      logo_image: null,
       menu: [
         { label: 'Αρχική', link: '/' },
         { label: 'Ο Σύλλογος', link: '/about' },
@@ -1022,8 +1021,7 @@ const getKalitechniaSeedData = () => {
         tagline: 'Σύλλογος Ρυθμικής & Καλλιτεχνικής Γυμναστικής',
         description:
           'Σύλλογος Γυμναστικής Καλλιτεχνίας στην Κεφαλονιά. Προάγουμε την αθλητική αριστεία και την υγιή ανάπτυξη των παιδιών.',
-        logo_image:
-          'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Logo%20KGK%20%CF%85%CF%88%CE%B7%CE%BB%CE%AE%CF%82%20%CE%B1%CE%BD%CE%AC%CE%BB%CF%85%CF%83%CE%B7%CF%82-YP2dWdAD9HKxgCBQOBLccXnxTydRcQ.png',
+        logo_image: null,
       },
       contact: {
         title: 'Επικοινωνία',
@@ -1089,13 +1087,12 @@ const getKalitechniaSeedData = () => {
       subheadline: lexical('Ανακαλύψτε τη μαγεία της γυμναστικής στον σύλλογό μας.'),
       ctaLabel: 'Δες τα Τμήματά μας',
       ctaHref: '/programs',
-      backgroundImage:
-        'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/4E61F67B-0337-4478-8A77-8114550D1239%20%281%29-hJCE20zQfhEIr0Zo1h6Mk1Zl1U47lS.jpeg',
+      backgroundImage: null,
     },
     welcome: {
       title: 'Καλώς ήρθατε στην Καλλιτεχνία!',
       paragraphs: lexParagraphs.map((content) => ({ content })),
-      image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_6321-EPivdvbOD9wX1IPMd2dA4e3aZlVtiE.jpeg',
+      image: null,
     },
     programs: {
       title: 'Τα Τμήματά μας',
@@ -1104,7 +1101,7 @@ const getKalitechniaSeedData = () => {
         {
           title: 'Καλλιτεχνική',
           description: lexical('Αναπτύξτε δύναμη, ευλυγισία και χάρη μέσα από την καλλιτεχνική γυμναστική'),
-          image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_6341-lYd2EHQV08gx6DxJdWhs3MXKIhJs8l.jpeg',
+          image: null,
           linkLabel: 'Μάθετε Περισσότερα',
           linkHref: '/programs#kallitexniki',
           anchor: 'kallitexniki',
@@ -1112,7 +1109,7 @@ const getKalitechniaSeedData = () => {
         {
           title: 'Ρυθμική',
           description: lexical('Συνδυάστε χορό, μουσική και γυμναστική με όργανα όπως κορδέλα και μπάλα'),
-          image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_6340%20%281%29-6T0A1KQPyDVi8Gr7ev3c5o4qGRiEuW.jpeg',
+          image: null,
           linkLabel: 'Μάθετε Περισσότερα',
           linkHref: '/programs#rythmiki',
           anchor: 'rythmiki',
@@ -1120,7 +1117,7 @@ const getKalitechniaSeedData = () => {
         {
           title: 'Προαγωνιστικά',
           description: lexical('Εντατική προετοιμασία για αθλητές που στοχεύουν σε αγώνες και διακρίσεις'),
-          image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_6320-Pb93nEudabKTDpdQwN5hOwhW0tlBou.jpeg',
+          image: null,
           linkLabel: 'Μάθετε Περισσότερα',
           linkHref: '/programs#proagonistika',
           anchor: 'proagonistika',
@@ -1128,7 +1125,7 @@ const getKalitechniaSeedData = () => {
         {
           title: 'Παιδικά',
           description: lexical('Εισαγωγή στη γυμναστική για παιδιά 4-7 ετών με παιχνίδι και διασκέδαση'),
-          image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_6323-LZ8D1nFb8q5atienRmdoRw14ABglt6.jpeg',
+          image: null,
           linkLabel: 'Μάθετε Περισσότερα',
           linkHref: '/programs#paidika',
           anchor: 'paidika',
@@ -1142,17 +1139,17 @@ const getKalitechniaSeedData = () => {
         {
           title: 'UV Παράσταση',
           caption: lexical('Μοναδικές στιγμές στη σκηνή'),
-          image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_6064-dtKNW2y3nWi4kjmvriBpP8rrQpz5wE.jpeg',
+          image: null,
         },
         {
           title: 'Ομαδική Παράσταση',
           caption: lexical('Συγχρονισμός και αρμονία'),
-          image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_6068%20%281%29-Vk2nWKd2qSVzRl2ldqmb919zO5TCf9.jpeg',
+          image: null,
         },
         {
           title: 'Νεαρές Αθλήτριες',
           caption: lexical('Το μέλλον της γυμνασικής'),
-          image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/4E61F67B-0337-4478-8A77-8114550D1239%20%281%29-hJCE20zQfhEIr0Zo1h6Mk1Zl1U47lS.jpeg',
+          image: null,
         },
       ],
     },
@@ -1165,21 +1162,21 @@ const getKalitechniaSeedData = () => {
           summary: lexical('Οι αθλήτριές μας διακρίθηκαν στους πρόσφατους αγώνες, κερδίζοντας 5 μετάλλια και κάνοντας υπερήφανο τον σύλλογο.'),
           date: '15 Ιανουαρίου 2025',
           href: '/news',
-          image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_6064-dtKNW2y3nWi4kjmvriBpP8rrQpz5wE.jpeg',
+          image: null,
         },
         {
           title: 'Ανοίγουν Νέα Τμήματα για τη Σεζόν 2025',
           summary: lexical('Ξεκινούν οι εγγραφές για τα νέα τμήματα! Προσφέρουμε δωρεάν δοκιμαστικό μάθημα για όλους τους νέους αθλητές.'),
           date: '8 Ιανουαρίου 2025',
           href: '/news',
-          image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_6341-lYd2EHQV08gx6DxJdWhs3MXKIhJs8l.jpeg',
+          image: null,
         },
         {
           title: 'Μαγική Ετήσια Παράσταση 2024',
           summary: lexical('Η ετήσια παράστασή μας ήταν μια απόλυτη επιτυχία! Ευχαριστούμε όλους όσους μας τίμησαν με την παρουσία τους.'),
           date: '20 Δεκεμβρίου 2024',
           href: '/news',
-          image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_6320-Pb93nEudabKTDpdQwN5hOwhW0tlBou.jpeg',
+          image: null,
         },
       ],
     },

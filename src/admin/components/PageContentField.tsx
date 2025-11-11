@@ -2,7 +2,6 @@
 
 import React, { useEffect, useMemo, useState } from 'react'
 import { fieldBaseClass } from '@payloadcms/ui/fields/shared'
-import { useField } from '@payloadcms/ui/forms/useField'
 import { RichTextField as LexicalRichTextField, buildDefaultEditorState } from '@payloadcms/richtext-lexical/client'
 import './PageContentField.scss'
 
@@ -92,7 +91,32 @@ interface PageTypeDoc {
   fields?: unknown
 }
 
-const normalizeRelationshipValue = (value: RelationshipValue): string | number | null => {
+const extractPageTypeValue = (value: unknown): RelationshipValue => {
+  if (value == null) return null
+
+  if (Array.isArray(value)) {
+    return extractPageTypeValue(value[0] ?? null)
+  }
+
+  if (typeof value === 'object') {
+    const record = value as Record<string, unknown>
+    if (record.pageType) {
+      return extractPageTypeValue(record.pageType)
+    }
+
+    if (record.id !== undefined || record.value !== undefined) {
+      return record as RelationshipValue
+    }
+  }
+
+  if (typeof value === 'string' || typeof value === 'number') {
+    return value as RelationshipValue
+  }
+
+  return null
+}
+
+const normalizeRelationshipValue = (value: RelationshipValue | unknown): string | number | null => {
   if (value == null) return null
 
   if (Array.isArray(value)) {
@@ -115,7 +139,15 @@ const fetchPageType = async (id: string | number): Promise<PageTypeDoc> => {
   if (!res.ok) {
     throw new Error(`Failed to load page type ${id}`)
   }
-  return res.json()
+  const data = await res.json()
+
+  if (data && typeof data === 'object') {
+    if ('doc' in data && data.doc && typeof data.doc === 'object') {
+      return data.doc as PageTypeDoc
+    }
+  }
+
+  return data as PageTypeDoc
 }
 
 const humanizeLabel = (input: string): string => {
@@ -640,23 +672,53 @@ const JSONFallbackEditor: React.FC<PayloadJSONFieldProps> = ({ value, onChange }
 }
 
 interface PageContentFieldInnerProps extends PayloadJSONFieldProps {
-  fieldState: ReturnType<typeof useField<any>>
-  pageTypeFieldState: ReturnType<typeof useField<RelationshipValue>>
+  siblingData?: Record<string, unknown>
+  showError?: boolean
+  errorMessage?: string
 }
 
-const PageContentFieldInner: React.FC<PageContentFieldInnerProps> = ({ fieldState, pageTypeFieldState }) => {
-  const { value, setValue, showError, errorMessage } = fieldState
-  const { value: pageTypeValue } = pageTypeFieldState
+const PageContentFieldInner: React.FC<PageContentFieldInnerProps> = (props) => {
+  const { value: propValue, onChange, siblingData, showError, errorMessage, path } = props
+
+  useEffect(() => {
+    if (process.env.NODE_ENV !== 'production') {
+      console.debug('[PageContentField] props snapshot', {
+        siblingData,
+        path,
+        keys: Object.keys(props ?? {}),
+      })
+    }
+  }, [siblingData, path, props])
+
+  const [value, setValue] = useState<any>(propValue ?? {})
+
+  useEffect(() => {
+    setValue(propValue ?? {})
+  }, [propValue])
+
+  const setValueAndNotify = (next: any) => {
+    setValue(next)
+    onChange?.(next)
+  }
+
+  const pageTypeSource = extractPageTypeValue(
+    (siblingData as { pageType?: unknown } | undefined)?.pageType ??
+      (props as unknown as { pageType?: unknown }).pageType ??
+      (siblingData as { pageTypeId?: unknown } | undefined)?.pageTypeId ??
+      (props as unknown as { pageTypeId?: unknown }).pageTypeId ??
+      null,
+  )
 
   const [pageType, setPageType] = useState<PageTypeDoc | null>(null)
   const [loading, setLoading] = useState(false)
   const [loadError, setLoadError] = useState<string | null>(null)
 
-  const pageTypeId = useMemo(() => normalizeRelationshipValue(pageTypeValue), [pageTypeValue])
+  const pageTypeId = useMemo(() => normalizeRelationshipValue(pageTypeSource), [pageTypeSource])
 
   useEffect(() => {
     if (!pageTypeId) {
       setPageType(null)
+      console.log('[PageContentField] missing pageTypeId, fallback to JSON')
       return
     }
 
@@ -667,12 +729,14 @@ const PageContentFieldInner: React.FC<PageContentFieldInnerProps> = ({ fieldStat
     fetchPageType(pageTypeId)
       .then((doc) => {
         if (!cancelled) {
+          console.log('[PageContentField] loaded page type', doc)
           setPageType(doc)
         }
       })
       .catch((error) => {
         if (!cancelled) {
           setLoadError((error as Error).message)
+          console.error('[PageContentField] failed to load page type', error)
           setPageType(null)
         }
       })
@@ -691,7 +755,7 @@ const PageContentFieldInner: React.FC<PageContentFieldInnerProps> = ({ fieldStat
     return (
       <div className={`${fieldBaseClass} page-content-editor__empty`}>
         <p>Επιλέξτε ένα Page Type για να εμφανιστούν τα πεδία περιεχομένου.</p>
-        <JSONFallbackEditor value={value} onChange={setValue} />
+        <JSONFallbackEditor path={path} value={value} onChange={setValueAndNotify} />
       </div>
     )
   }
@@ -708,13 +772,13 @@ const PageContentFieldInner: React.FC<PageContentFieldInnerProps> = ({ fieldStat
     return (
       <div className={`${fieldBaseClass} page-content-editor__empty`}>
         <p>Αποτυχία φόρτωσης page type: {loadError}</p>
-        <JSONFallbackEditor value={value} onChange={setValue} />
+        <JSONFallbackEditor path={path} value={value} onChange={setValueAndNotify} />
       </div>
     )
   }
 
   if (!pageType) {
-    return <JSONFallbackEditor value={value} onChange={setValue} />
+    return <JSONFallbackEditor path={path} value={value} onChange={setValueAndNotify} />
   }
 
   const schema = normalizePageTypeSchema(pageType.fields)
@@ -724,7 +788,7 @@ const PageContentFieldInner: React.FC<PageContentFieldInnerProps> = ({ fieldStat
       <div className={`${fieldBaseClass} page-content-editor__fallback`}>
         {showError && errorMessage && <p className="page-content-editor__error">{errorMessage}</p>}
         <p>Δεν υπάρχει δυναμικός επεξεργαστής για το συγκεκριμένο page type. Χρησιμοποιήστε την JSON προβολή.</p>
-        <JSONFallbackEditor value={value} onChange={setValue} />
+        <JSONFallbackEditor path={path} value={value} onChange={setValueAndNotify} />
       </div>
     )
   }
@@ -734,17 +798,10 @@ const PageContentFieldInner: React.FC<PageContentFieldInnerProps> = ({ fieldStat
       schema={schema}
       value={value}
       onChange={(next) => {
-        setValue(next)
+        setValueAndNotify(next)
       }}
     />
   )
-}
-
-const PageContentFieldWithContext: React.FC<PayloadJSONFieldProps> = (props) => {
-  const fieldState = useField<any>({ path: props.path })
-  const pageTypeFieldState = useField<RelationshipValue>({ path: 'pageType' })
-
-  return <PageContentFieldInner {...props} fieldState={fieldState} pageTypeFieldState={pageTypeFieldState} />
 }
 
 const PageContentFieldBase: React.FC<PayloadJSONFieldProps> = (props) => {
@@ -756,11 +813,12 @@ const PageContentFieldBase: React.FC<PayloadJSONFieldProps> = (props) => {
 
   if (!isClient) return null
 
-  return <PageContentFieldWithContext {...props} />
+  return <PageContentFieldInner {...props} path={props.path ?? 'content'} />
 }
 
-const PageContentField = PageContentFieldBase as typeof PageContentFieldBase & { client?: boolean }
-PageContentField.client = true
+const PageContentField = Object.assign(PageContentFieldBase, {
+  client: true as const,
+})
 
 export default PageContentField
 

@@ -165,9 +165,9 @@ export interface Page {
    */
   headerFooterPageSlug?: string | null;
   /**
-   * Διαχειριστείτε τα περιεχόμενα των ενοτήτων της σελίδας.
+   * Διαχειριστείτε τα περιεχόμενα των ενοτήτων της σελίδας (ftiaxesite).
    */
-  sections?: {
+  ftiaxesiteSections?: {
     /**
      * Hero section στην αρχή της σελίδας.
      */
@@ -333,9 +333,273 @@ export interface Page {
     };
   };
   /**
-   * Κοινό header/footer για όλες τις σελίδες του tenant.
+   * Διαχειριστείτε τα περιεχόμενα της αρχικής σελίδας (Kalitechnia).
    */
-  sharedLayout?: {
+  kalitechniaSections?: {
+    /**
+     * Hero section της αρχικής σελίδας.
+     */
+    hero?: {
+      headline?: string | null;
+      subheadline?: {
+        root: {
+          type: string;
+          children: {
+            type: any;
+            version: number;
+            [k: string]: unknown;
+          }[];
+          direction: ('ltr' | 'rtl') | null;
+          format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+          indent: number;
+          version: number;
+        };
+        [k: string]: unknown;
+      } | null;
+      ctaLabel?: string | null;
+      ctaHref?: string | null;
+      /**
+       * Ανεβάστε ή επιλέξτε την εικόνα φόντου του hero.
+       */
+      backgroundImage?: (number | null) | Media;
+    };
+    /**
+     * Ενότητα καλωσορίσματος.
+     */
+    welcome?: {
+      title?: string | null;
+      /**
+       * Παράγραφοι κειμένου.
+       */
+      paragraphs?:
+        | {
+            content?: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            } | null;
+            id?: string | null;
+          }[]
+        | null;
+      /**
+       * Ανεβάστε ή επιλέξτε εικόνα για την ενότητα καλωσορίσματος.
+       */
+      image?: (number | null) | Media;
+    };
+    /**
+     * Ενότητα προγραμμάτων.
+     */
+    programs?: {
+      title?: string | null;
+      subtitle?: {
+        root: {
+          type: string;
+          children: {
+            type: any;
+            version: number;
+            [k: string]: unknown;
+          }[];
+          direction: ('ltr' | 'rtl') | null;
+          format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+          indent: number;
+          version: number;
+        };
+        [k: string]: unknown;
+      } | null;
+      items?:
+        | {
+            title?: string | null;
+            description?: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            } | null;
+            /**
+             * Ανεβάστε ή επιλέξτε εικόνα για την κάρτα προγράμματος.
+             */
+            image?: (number | null) | Media;
+            linkLabel?: string | null;
+            linkHref?: string | null;
+            /**
+             * Anchor ID για το πρόγραμμα.
+             */
+            anchor?: string | null;
+            id?: string | null;
+          }[]
+        | null;
+    };
+    /**
+     * Συλλογή φωτογραφιών.
+     */
+    gallery?: {
+      title?: string | null;
+      subtitle?: {
+        root: {
+          type: string;
+          children: {
+            type: any;
+            version: number;
+            [k: string]: unknown;
+          }[];
+          direction: ('ltr' | 'rtl') | null;
+          format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+          indent: number;
+          version: number;
+        };
+        [k: string]: unknown;
+      } | null;
+      items?:
+        | {
+            title?: string | null;
+            caption?: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            } | null;
+            /**
+             * Ανεβάστε ή επιλέξτε εικόνα για τη συλλογή.
+             */
+            image?: (number | null) | Media;
+            id?: string | null;
+          }[]
+        | null;
+    };
+    /**
+     * Ενότητα ειδήσεων.
+     */
+    news?: {
+      title?: string | null;
+      subtitle?: {
+        root: {
+          type: string;
+          children: {
+            type: any;
+            version: number;
+            [k: string]: unknown;
+          }[];
+          direction: ('ltr' | 'rtl') | null;
+          format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+          indent: number;
+          version: number;
+        };
+        [k: string]: unknown;
+      } | null;
+      items?:
+        | {
+            title?: string | null;
+            summary?: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            } | null;
+            date?: string | null;
+            /**
+             * URL άρθρου.
+             */
+            href?: string | null;
+            /**
+             * Ανεβάστε ή επιλέξτε εικόνα για το νέο.
+             */
+            image?: (number | null) | Media;
+            id?: string | null;
+          }[]
+        | null;
+    };
+    /**
+     * Υποστηρικτές.
+     */
+    sponsors?: {
+      title?: string | null;
+      subtitle?: {
+        root: {
+          type: string;
+          children: {
+            type: any;
+            version: number;
+            [k: string]: unknown;
+          }[];
+          direction: ('ltr' | 'rtl') | null;
+          format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+          indent: number;
+          version: number;
+        };
+        [k: string]: unknown;
+      } | null;
+      items?:
+        | {
+            name?: string | null;
+            id?: string | null;
+          }[]
+        | null;
+    };
+    /**
+     * Ενότητα Call To Action.
+     */
+    cta?: {
+      title?: string | null;
+      subtitle?: {
+        root: {
+          type: string;
+          children: {
+            type: any;
+            version: number;
+            [k: string]: unknown;
+          }[];
+          direction: ('ltr' | 'rtl') | null;
+          format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+          indent: number;
+          version: number;
+        };
+        [k: string]: unknown;
+      } | null;
+      buttonLabel?: string | null;
+      buttonHref?: string | null;
+    };
+  };
+  /**
+   * Κοινό header/footer layout για το ftiaxesite.
+   */
+  ftiaxesiteSharedLayout?: {
     /**
      * Ρυθμίσεις κεφαλίδας.
      */
@@ -385,6 +649,88 @@ export interface Page {
       copyright?: string | null;
     };
   };
+  /**
+   * Κοινό header/footer layout για την Kalitechnia.
+   */
+  kalitechniaSharedLayout?: {
+    /**
+     * Ρυθμίσεις κεφαλίδας.
+     */
+    header?: {
+      logo_text?: string | null;
+      /**
+       * Ανεβάστε ή επιλέξτε το λογότυπο.
+       */
+      logo_image?: (number | null) | Media;
+      menu?:
+        | {
+            label: string;
+            link: string;
+            id?: string | null;
+          }[]
+        | null;
+      cta?: {
+        label?: string | null;
+        link?: string | null;
+      };
+    };
+    /**
+     * Ρυθμίσεις υποσέλιδου.
+     */
+    footer?: {
+      brand?: {
+        name?: string | null;
+        tagline?: string | null;
+        description?: string | null;
+        /**
+         * Ανεβάστε ή επιλέξτε το λογότυπο.
+         */
+        logo_image?: (number | null) | Media;
+      };
+      contact?: {
+        title?: string | null;
+        address?: string | null;
+        phone?: string | null;
+        email?: string | null;
+      };
+      links?: {
+        title?: string | null;
+        items?:
+          | {
+              label: string;
+              href: string;
+              id?: string | null;
+            }[]
+          | null;
+      };
+      socials?:
+        | {
+            label: string;
+            icon?: string | null;
+            href: string;
+            id?: string | null;
+          }[]
+        | null;
+      externalLinks?:
+        | {
+            label: string;
+            href: string;
+            id?: string | null;
+          }[]
+        | null;
+      legalLinks?:
+        | {
+            label: string;
+            href: string;
+            id?: string | null;
+          }[]
+        | null;
+      copyright?: string | null;
+    };
+  };
+  /**
+   * Το περιεχόμενο της σελίδας. Τα διαθέσιμα πεδία εξαρτώνται από το επιλεγμένο Page Type του tenant.
+   */
   content?:
     | {
         [k: string]: unknown;
@@ -741,7 +1087,7 @@ export interface PagesSelect<T extends boolean = true> {
   pageType?: T;
   summary?: T;
   headerFooterPageSlug?: T;
-  sections?:
+  ftiaxesiteSections?:
     | T
     | {
         hero?:
@@ -807,7 +1153,99 @@ export interface PagesSelect<T extends boolean = true> {
                   };
             };
       };
-  sharedLayout?:
+  kalitechniaSections?:
+    | T
+    | {
+        hero?:
+          | T
+          | {
+              headline?: T;
+              subheadline?: T;
+              ctaLabel?: T;
+              ctaHref?: T;
+              backgroundImage?: T;
+            };
+        welcome?:
+          | T
+          | {
+              title?: T;
+              paragraphs?:
+                | T
+                | {
+                    content?: T;
+                    id?: T;
+                  };
+              image?: T;
+            };
+        programs?:
+          | T
+          | {
+              title?: T;
+              subtitle?: T;
+              items?:
+                | T
+                | {
+                    title?: T;
+                    description?: T;
+                    image?: T;
+                    linkLabel?: T;
+                    linkHref?: T;
+                    anchor?: T;
+                    id?: T;
+                  };
+            };
+        gallery?:
+          | T
+          | {
+              title?: T;
+              subtitle?: T;
+              items?:
+                | T
+                | {
+                    title?: T;
+                    caption?: T;
+                    image?: T;
+                    id?: T;
+                  };
+            };
+        news?:
+          | T
+          | {
+              title?: T;
+              subtitle?: T;
+              items?:
+                | T
+                | {
+                    title?: T;
+                    summary?: T;
+                    date?: T;
+                    href?: T;
+                    image?: T;
+                    id?: T;
+                  };
+            };
+        sponsors?:
+          | T
+          | {
+              title?: T;
+              subtitle?: T;
+              items?:
+                | T
+                | {
+                    name?: T;
+                    id?: T;
+                  };
+            };
+        cta?:
+          | T
+          | {
+              title?: T;
+              subtitle?: T;
+              buttonLabel?: T;
+              buttonHref?: T;
+            };
+      };
+  ftiaxesiteSharedLayout?:
     | T
     | {
         header?:
@@ -855,6 +1293,84 @@ export interface PagesSelect<T extends boolean = true> {
                           href?: T;
                           id?: T;
                         };
+                  };
+              copyright?: T;
+            };
+      };
+  kalitechniaSharedLayout?:
+    | T
+    | {
+        header?:
+          | T
+          | {
+              logo_text?: T;
+              logo_image?: T;
+              menu?:
+                | T
+                | {
+                    label?: T;
+                    link?: T;
+                    id?: T;
+                  };
+              cta?:
+                | T
+                | {
+                    label?: T;
+                    link?: T;
+                  };
+            };
+        footer?:
+          | T
+          | {
+              brand?:
+                | T
+                | {
+                    name?: T;
+                    tagline?: T;
+                    description?: T;
+                    logo_image?: T;
+                  };
+              contact?:
+                | T
+                | {
+                    title?: T;
+                    address?: T;
+                    phone?: T;
+                    email?: T;
+                  };
+              links?:
+                | T
+                | {
+                    title?: T;
+                    items?:
+                      | T
+                      | {
+                          label?: T;
+                          href?: T;
+                          id?: T;
+                        };
+                  };
+              socials?:
+                | T
+                | {
+                    label?: T;
+                    icon?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              externalLinks?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              legalLinks?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
                   };
               copyright?: T;
             };
