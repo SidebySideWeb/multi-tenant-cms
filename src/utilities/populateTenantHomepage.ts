@@ -243,7 +243,7 @@ export async function populateTenantHomepage(
         title: data.hero.headline,
         summary: toLexicalState(data.hero.subheadline) as any,
         pageType: pageTypeId,
-        sections: sectionsPayload as any,
+        ftiaxesiteSections: sectionsPayload as any,
         content: contentPayload as any,
       },
     })
@@ -258,7 +258,7 @@ export async function populateTenantHomepage(
         summary: toLexicalState(data.hero.subheadline) as any,
         pageType: pageTypeId,
         status: 'published',
-        sections: sectionsPayload as any,
+        ftiaxesiteSections: sectionsPayload as any,
         content: contentPayload as any,
       },
     })
