@@ -1,4 +1,10 @@
-import type { CollectionConfig, FieldHook, FilterOptionsProps, Where } from 'payload'
+import type {
+  CollectionAfterReadHook,
+  CollectionConfig,
+  FieldHook,
+  FilterOptionsProps,
+  Where,
+} from 'payload'
 
 import { assignTenantOnCreate } from './hooks/assignTenantOnCreate'
 import { ensurePageTypeMatchesTenant } from './hooks/ensurePageTypeMatchesTenant'
@@ -289,6 +295,34 @@ const getDefaultHeaderFooterSlug = (slug?: string | null) => {
   return 'header-footer-ftiaxesite'
 }
 
+const isKallitechniaSlug = (slug: unknown) =>
+  typeof slug === 'string' && (slug === 'kallitechnia-homepage' || slug.startsWith('kallitechnia-'))
+
+const stripFtiaxesiteFieldsForKallitechnia: CollectionAfterReadHook = ({ doc }) => {
+  if (!doc || typeof doc !== 'object') {
+    return doc
+  }
+
+  const record = doc as Record<string, any>
+  const slug = record.slug
+
+  const tenantSlug =
+    typeof record.tenant === 'object' && record.tenant !== null
+      ? (record.tenant as Record<string, any>).slug
+      : undefined
+
+  if (isKallitechniaSlug(slug) || tenantSlug === 'kallitechnia') {
+    if ('ftiaxesiteSections' in record) {
+      delete record.ftiaxesiteSections
+    }
+    if ('ftiaxesiteSharedLayout' in record) {
+      delete record.ftiaxesiteSharedLayout
+    }
+  }
+
+  return record
+}
+
 export const Pages: CollectionConfig = {
   slug: 'pages',
   access: {
@@ -305,6 +339,7 @@ export const Pages: CollectionConfig = {
   },
   hooks: {
     beforeValidate: [assignTenantOnCreate, ensurePageTypeMatchesTenant],
+    afterRead: [stripFtiaxesiteFieldsForKallitechnia],
   },
   timestamps: true,
   fields: [
