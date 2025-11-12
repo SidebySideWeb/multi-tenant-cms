@@ -283,7 +283,7 @@ const getDefaultHeaderFooterSlug = (slug?: string | null) => {
   if (!slug) {
     return 'header-footer-ftiaxesite'
   }
-  if (slug === 'kallitechnia-homepage') {
+  if (slug === 'kallitechnia-homepage' || slug.startsWith('kallitechnia-')) {
     return 'header-footer-kallitechnia'
   }
   return 'header-footer-ftiaxesite'
@@ -438,6 +438,10 @@ export const Pages: CollectionConfig = {
       hooks: {
         beforeValidate: [
           ({ value, siblingData }) => {
+            const slug = siblingData?.slug
+            if (slug !== 'ftiaxesite-homepage') {
+              return normalizeSections(value)
+            }
             if (value && typeof value === 'object' && Object.keys(value).length > 0) {
               return normalizeSections(value)
             }
@@ -450,6 +454,10 @@ export const Pages: CollectionConfig = {
         ],
         afterRead: [
           ({ value, siblingData }) => {
+            const slug = siblingData?.slug
+            if (slug !== 'ftiaxesite-homepage') {
+              return normalizeSections(value)
+            }
             if (value && typeof value === 'object' && Object.keys(value).length > 0) {
               return normalizeSections(value)
             }
@@ -718,6 +726,10 @@ export const Pages: CollectionConfig = {
       hooks: {
         beforeValidate: [
           ({ value, siblingData }) => {
+            const slug = siblingData?.slug
+            if (slug !== 'kallitechnia-homepage') {
+              return normalizeSections(value)
+            }
             if (value && typeof value === 'object' && Object.keys(value).length > 0) {
               return normalizeSections(value)
             }
@@ -730,6 +742,10 @@ export const Pages: CollectionConfig = {
         ],
         afterRead: [
           ({ value, siblingData }) => {
+            const slug = siblingData?.slug
+            if (slug !== 'kallitechnia-homepage') {
+              return normalizeSections(value)
+            }
             if (value && typeof value === 'object' && Object.keys(value).length > 0) {
               return normalizeSections(value)
             }
@@ -994,6 +1010,10 @@ export const Pages: CollectionConfig = {
       hooks: {
         beforeValidate: [
           ({ value, siblingData }) => {
+            const slug = siblingData?.slug
+            if (slug !== 'header-footer-ftiaxesite') {
+              return value
+            }
             if (value && typeof value === 'object' && Object.keys(value).length > 0) {
               return value
             }
@@ -1006,6 +1026,10 @@ export const Pages: CollectionConfig = {
         ],
         afterRead: [
           ({ value, siblingData }) => {
+            const slug = siblingData?.slug
+            if (slug !== 'header-footer-ftiaxesite') {
+              return value
+            }
             if (value && typeof value === 'object' && Object.keys(value).length > 0) {
               return value
             }
@@ -1151,6 +1175,10 @@ export const Pages: CollectionConfig = {
       hooks: {
         beforeValidate: [
           ({ value, siblingData }) => {
+            const slug = siblingData?.slug
+            if (slug !== 'header-footer-kallitechnia') {
+              return value
+            }
             if (value && typeof value === 'object' && Object.keys(value).length > 0) {
               return value
             }
@@ -1163,6 +1191,10 @@ export const Pages: CollectionConfig = {
         ],
         afterRead: [
           ({ value, siblingData }) => {
+            const slug = siblingData?.slug
+            if (slug !== 'header-footer-kallitechnia') {
+              return value
+            }
             if (value && typeof value === 'object' && Object.keys(value).length > 0) {
               return value
             }
