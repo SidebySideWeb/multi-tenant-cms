@@ -142,9 +142,17 @@ const normalizeRelationshipValue = (value: RelationshipValue | unknown): string 
   return value as string | number
 }
 
-const fetchPageType = async (id: string | number): Promise<PageTypeDoc> => {
+const fetchPageType = async (id: string | number, tenantSlug?: string): Promise<PageTypeDoc> => {
+  const headers: HeadersInit = tenantSlug
+    ? {
+        'X-Tenant-Slug': tenantSlug,
+      }
+    : {}
+
   const res = await fetch(`/api/page-types/${id}?depth=0`, {
     credentials: 'include',
+    cache: 'no-store',
+    headers,
   })
   if (!res.ok) {
     throw new Error(`Failed to load page type ${id}`)
@@ -719,6 +727,51 @@ const PageContentFieldInner: React.FC<PageContentFieldInnerProps> = (props) => {
       null,
   )
 
+  const tenantSlugHint = useMemo(() => {
+    if (!siblingData || typeof siblingData !== 'object') {
+      return undefined
+    }
+
+    const data = siblingData as Record<string, any>
+
+    if (typeof data.tenantSlug === 'string') {
+      return data.tenantSlug
+    }
+
+    const tenantValue = data.tenant
+    if (typeof tenantValue === 'string') {
+      return tenantValue
+    }
+    if (tenantValue && typeof tenantValue === 'object') {
+      if (typeof (tenantValue as any).slug === 'string') {
+        return (tenantValue as any).slug
+      }
+      if (typeof (tenantValue as any).value === 'string') {
+        return (tenantValue as any).value
+      }
+    }
+
+    const slug = typeof data.slug === 'string' ? data.slug : undefined
+    if (slug) {
+      if (
+        slug === 'header-footer-kallitechnia' ||
+        slug.startsWith('kallitechnia-') ||
+        slug === 'kallitechnia'
+      ) {
+        return 'kallitechnia'
+      }
+      if (
+        slug === 'header-footer-ftiaxesite' ||
+        slug.startsWith('ftiaxesite-') ||
+        slug === 'ftiaxesite'
+      ) {
+        return 'ftiaxesite'
+      }
+    }
+
+    return undefined
+  }, [siblingData])
+
   const [pageType, setPageType] = useState<PageTypeDoc | null>(null)
   const [loading, setLoading] = useState(false)
   const [loadError, setLoadError] = useState<string | null>(null)
@@ -736,7 +789,7 @@ const PageContentFieldInner: React.FC<PageContentFieldInnerProps> = (props) => {
     setLoading(true)
     setLoadError(null)
 
-    fetchPageType(pageTypeId)
+    fetchPageType(pageTypeId, tenantSlugHint)
       .then((doc) => {
         if (!cancelled) {
           console.log('[PageContentField] loaded page type', doc)
@@ -759,7 +812,7 @@ const PageContentFieldInner: React.FC<PageContentFieldInnerProps> = (props) => {
     return () => {
       cancelled = true
     }
-  }, [pageTypeId])
+  }, [pageTypeId, tenantSlugHint])
 
   if (!pageTypeId) {
     return (

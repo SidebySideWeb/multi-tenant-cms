@@ -137,6 +137,8 @@ const upsertPage = async (
     summary?: unknown
     content: Record<string, unknown>
     seo?: Record<string, unknown>
+    ftiaxesiteSections?: Record<string, unknown>
+    ftiaxesiteSharedLayout?: Record<string, unknown>
   },
 ) => {
   const tenantDoc = await payload.findByID({
@@ -185,6 +187,8 @@ const upsertPage = async (
     summary: pageData.summary,
     content: pageData.content,
     seo: pageData.seo,
+    ftiaxesiteSections: pageData.ftiaxesiteSections,
+    ftiaxesiteSharedLayout: pageData.ftiaxesiteSharedLayout,
     publishedAt: new Date().toISOString(),
   }
 
@@ -440,13 +444,12 @@ const getFtiaxesiteSeedData = () => {
     },
   }
 
-  const homepageContent = {
-    shared: {
-      headerFooterPageSlug: 'header-footer-ftiaxesite',
-    },
+  const homepageSections = {
     hero: {
-      headline: 'II,I1II_I I,I site III. II 48 IZI?II,?" II?IO 250,',
-      subheadline: lexical('IoI I,I I'I?IIII I,II, IIIIII,IrI, I?IIIIII?III,, I'III1II.I?I3II?II I3I?IrI3II?I, II1IIIIII1II III1 II?II3I3IIIII,I1II websites.'),
+      headline: 'Φτιάξε το site σου σε 48 ώρες — από 250€',
+      subheadline: lexical(
+        'Με τη δύναμη της Τεχνητής Νοημοσύνης, δημιουργούμε γρήγορα, οικονομικά και επαγγελματικά websites.',
+      ),
       cta: 'Ξεκίνα τώρα',
       stats: [
         { value: '48h', label: 'Παράδοση' },
@@ -532,6 +535,13 @@ const getFtiaxesiteSeedData = () => {
     },
   }
 
+  const homepageContent = {
+    shared: {
+      headerFooterPageSlug: 'header-footer-ftiaxesite',
+    },
+    sections: homepageSections,
+  }
+
   return {
     pageTypes: [
       {
@@ -553,6 +563,7 @@ const getFtiaxesiteSeedData = () => {
         slug: 'header-footer-ftiaxesite',
         title: 'Header & Footer (ftiaxesite)',
         pageTypeSlug: 'header-footer-ftiaxesite',
+        ftiaxesiteSharedLayout: headerFooterContent,
         content: headerFooterContent,
         seo: {
           title: 'ftiaxesite — Header & Footer',
@@ -563,12 +574,15 @@ const getFtiaxesiteSeedData = () => {
         slug: 'ftiaxesite-homepage',
         title: 'Ftiaxesite Homepage',
         pageTypeSlug: 'home-ftiaxesite',
-        summary: lexical('IoI I,I I'I?IIII I,II, IIIIII,IrI, I?IIIIII?III,, I'III1II.I?I3II?II I3I?IrI3II?I.'),
+        summary: lexical(
+          'Ανακαλύψτε πώς η ομάδα μας παραδίδει ολοκληρωμένα AI websites γρήγορα, οικονομικά και επαγγελματικά.',
+        ),
+        ftiaxesiteSections: homepageSections,
         content: homepageContent,
         seo: {
-          title: 'ftiaxesite.gr - AI Websites II 48 I?I?II,',
+          title: 'ftiaxesite.gr - AI Websites σε 48 ώρες',
           description: lexical(
-            'II,I1II_I I,I site III. II 48 IZI?II, II I,I I'I?IIII I,II, IIIIII,IrI, I?IIIIII?III,. IYI1IIIIII1II, I3I?IrI3II?I III1 II?II3I3IIIII,I1II websites II?IO 250,.',
+            'Φτιάξε το site σου σε 48 ώρες — από 250€. Με την ισχύ της Τεχνητής Νοημοσύνης παραδίδουμε επαγγελματικά websites έτοιμα για SEO και αναλύσεις.',
           ),
         },
       },
