@@ -298,58 +298,6 @@ const getDefaultHeaderFooterSlug = (slug?: string | null) => {
 const isKallitechniaSlug = (slug: unknown) =>
   typeof slug === 'string' && (slug === 'kallitechnia-homepage' || slug.startsWith('kallitechnia-'))
 
-/**
- * Removes tenant.slug from where clause since Payload doesn't support it
- * Access control already filters by tenant ID based on X-Tenant-Slug header
- */
-const enforceTenantFilter = async ({ req, where }: { req: any; where?: Where }): Promise<Where | undefined> => {
-  // Only apply for public requests (frontend queries)
-  if (req.user) {
-    return where
-  }
-
-  const whereObj = where as Where | undefined
-  
-  if (!whereObj || typeof whereObj !== 'object') {
-    return where
-  }
-
-  // Remove tenant.slug and tenant.domain from where clause
-  // Access control already filters by tenant ID
-  const newWhere: any = { ...whereObj }
-  
-  let hasInvalidTenantFilter = false
-  
-  // Remove tenant.slug if present
-  if ('tenant.slug' in newWhere) {
-    delete newWhere['tenant.slug']
-    hasInvalidTenantFilter = true
-  }
-  
-  // Remove tenant.domain if present
-  if ('tenant.domain' in newWhere) {
-    delete newWhere['tenant.domain']
-    hasInvalidTenantFilter = true
-  }
-
-  // Also check in 'and' array if present
-  if ('and' in newWhere && Array.isArray(newWhere.and)) {
-    newWhere.and = newWhere.and.filter((condition: any) => {
-      if (condition?.['tenant.slug'] || condition?.['tenant.domain']) {
-        hasInvalidTenantFilter = true
-        return false
-      }
-      return true
-    })
-  }
-
-  if (hasInvalidTenantFilter) {
-    console.warn('[enforceTenantFilter] Removed tenant.slug/tenant.domain from where clause - use X-Tenant-Slug header instead')
-  }
-
-  return newWhere as Where
-}
-
 const stripFtiaxesiteFieldsForKallitechnia: CollectionAfterReadHook = ({ doc }) => {
   if (!doc || typeof doc !== 'object') {
     return doc
@@ -390,7 +338,6 @@ export const Pages: CollectionConfig = {
       'Pages are scoped per tenant. Each page is linked to a tenant-specific page type and stores its editable content as JSON data.',
   },
   hooks: {
-    beforeFind: [enforceTenantFilter],
     beforeValidate: [assignTenantOnCreate, ensurePageTypeMatchesTenant],
     afterRead: [stripFtiaxesiteFieldsForKallitechnia],
   },
