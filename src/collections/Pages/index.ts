@@ -1,6 +1,5 @@
 import type {
   CollectionAfterReadHook,
-  CollectionBeforeFindHook,
   CollectionConfig,
   FieldHook,
   FilterOptionsProps,
@@ -303,7 +302,7 @@ const isKallitechniaSlug = (slug: unknown) =>
  * Removes tenant.slug from where clause since Payload doesn't support it
  * Access control already filters by tenant ID based on X-Tenant-Slug header
  */
-const enforceTenantFilter: CollectionBeforeFindHook = async ({ req, where }) => {
+const enforceTenantFilter = async ({ req, where }: { req: any; where?: Where }): Promise<Where | undefined> => {
   // Only apply for public requests (frontend queries)
   if (req.user) {
     return where
