@@ -8,37 +8,43 @@ export const tenantScopedReadAccess: Access = async ({ req }) => {
   if (!req.user) {
     const tenantSlug = req.headers.get('x-tenant-slug')
     
-    if (tenantSlug) {
-      try {
-        // Look up tenant by slug
-        const tenants = await req.payload.find({
-          collection: 'tenants',
-          where: {
-            slug: {
-              equals: tenantSlug,
-            },
-          },
-          limit: 1,
-          depth: 0,
-        })
-
-        if (tenants.docs.length > 0) {
-          const tenantId = tenants.docs[0].id
-          return {
-            tenant: {
-              equals: tenantId,
-            },
-          } as Where
-        }
-      } catch (error) {
-        // If lookup fails, fall through to allow access (will be filtered by where clause)
-        console.error('[tenantScopedReadAccess] Error looking up tenant:', error)
-      }
+    if (!tenantSlug) {
+      // NO tenant header = deny access (frontend must send it)
+      console.error('[tenantScopedReadAccess] No X-Tenant-Slug header provided')
+      return false
     }
 
-    // If no tenant slug header, allow access (frontend should send it)
-    // The where clause in the query will still be respected
-    return true
+    try {
+      // Look up tenant by slug - MUST succeed or deny access
+      const tenants = await req.payload.find({
+        collection: 'tenants',
+        where: {
+          slug: {
+            equals: tenantSlug,
+          },
+        },
+        limit: 1,
+        depth: 0,
+      })
+
+      if (tenants.docs.length === 0) {
+        // Tenant not found = deny access
+        console.error(`[tenantScopedReadAccess] Tenant with slug "${tenantSlug}" not found`)
+        return false
+      }
+
+      const tenantId = tenants.docs[0].id
+      // ALWAYS return a tenant filter - NEVER return true
+      return {
+        tenant: {
+          equals: tenantId,
+        },
+      } as Where
+    } catch (error) {
+      // If lookup fails, deny access
+      console.error('[tenantScopedReadAccess] Error looking up tenant:', error)
+      return false
+    }
   }
 
   if (isSuperAdmin(req.user)) {
